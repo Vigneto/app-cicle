@@ -1,88 +1,222 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Home - Scheda Allenamento</title>
-<link rel="stylesheet" href="scheda-allenamento/style.css">
-<style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - Scheda Allenamento</title>
+  <link rel="stylesheet" href="scheda-allenamento/style.css">
+  <style>
     body {
       margin: 0;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
-      align-items: center;     /* centra verticalmente */
-      background-color: #f0f0f0; /* colore di sfondo opzionale */
+      flex-direction: column;
+      background: linear-gradient(180deg, #f4f4f4 0%, #ececec 100%);
       font-family: Arial, sans-serif;
+      color: #1f1f1f;
     }
 
-    h1 {
-      font-size: 3em;
+    header {
+      background: #fff;
+      border-bottom: 1px solid #e3e3e3;
+      padding: 1.2rem 2rem;
+    }
+
+    header h1 {
+      margin: 0 0 0.5rem;
+      font-size: 2.2em;
       color: #fd9641;
+    }
+
+    .menu {
+      list-style: none;
+      display: flex;
+      gap: 1.2rem;
+      margin: 0;
+      padding: 0;
+      flex-wrap: wrap;
+    }
+
+    .menu a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+    }
+
+    main {
+      width: min(1100px, calc(100% - 2rem));
+      margin: 2rem auto;
+      flex: 1;
+    }
+
+    .hero {
+      background: #fff;
+      border-radius: 18px;
+      padding: 2rem;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+      margin-bottom: 2rem;
+    }
+
+    .hero h2 {
+      margin-top: 0;
+      font-size: clamp(2rem, 3vw, 3rem);
+      color: #1d1d1d;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      max-width: 760px;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn {
+      display: inline-block;
+      background: #fd9641;
+      color: #fff;
+      text-decoration: none;
+      padding: 0.9rem 1.4rem;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    .btn.secondary {
+      background: #1f1f1f;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .feature {
+      background: #fff;
+      border-radius: 14px;
+      padding: 1.3rem;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+    }
+
+    .feature h3 {
+      margin-top: 0;
+      color: #fd9641;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+    }
+
+    th, td {
+      border: 1px solid #e6e6e6;
+      padding: 0.9rem 1rem;
+      text-align: left;
+    }
+
+    th {
+      background: #f7f7f7;
+    }
+
+    footer {
+      text-align: center;
+      background: #1d1d1d;
+      color: #fff;
+      padding: 1rem;
     }
   </style>
 </head>
 <body>
-<header>
-<h1>Costruisci la tua scheda</h1>
-<nav>
-<ul class="menu">
-<li><a href="index.html">Home</a></li>
-<li><a href="scheda-allenamento/workouts.html">Esercizi</a></li>
-<li><a href="scheda-allenamento/recovery.html">Recupero</a></li>
-</ul>
-</nav>
-</header>
+  <header>
+    <h1>Costruisci la tua scheda</h1>
+    <nav>
+      <ul class="menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="scheda-allenamento/workouts.html">Esercizi</a></li>
+        <li><a href="scheda-allenamento/recovery.html">Recupero</a></li>
+      </ul>
+    </nav>
+  </header>
 
+  <main>
+    <section class="hero">
+      <h2>Pianifica il tuo allenamento in base agli obiettivi</h2>
+      <p>
+        Questo sito ti aiuta a creare una scheda personalizzata, scegliere gli esercizi giusti
+        e organizzare il recupero per migliorare forza, resistenza e composizione corporea.
+      </p>
 
-<main>
-<h2>Come costruire una scheda di allenamento</h2>
-<p>Costruire una scheda personalizzata ti aiuta ad allenarti in modo efficace e costante.</p>
+      <div class="cta-row">
+        <a class="btn" href="scheda-allenamento/workouts.html">Esplora gli esercizi</a>
+        <a class="btn secondary" href="scheda-allenamento/recovery.html">Scopri il recupero</a>
+      </div>
+    </section>
 
+    <section>
+      <h3>Come funziona</h3>
+      <div class="features">
+        <article class="feature">
+          <h3>1. Definisci l'obiettivo</h3>
+          <p>Forza, massa muscolare, definizione o resistenza: la scheda parte dal tuo traguardo.</p>
+        </article>
+        <article class="feature">
+          <h3>2. Scegli i gruppi muscolari</h3>
+          <p>Organizza gli allenamenti in modo equilibrato e progressivo per evitare sovraccarichi.</p>
+        </article>
+        <article class="feature">
+          <h3>3. Gestisci il recupero</h3>
+          <p>Un buon piano include riposo, sonno e strategie per migliorare la qualità dell'allenamento.</p>
+        </article>
+      </div>
+    </section>
 
-<h3>Principi base</h3>
-<ul>
-<li>Definisci il tuo obiettivo (forza, massa, definizione).</li>
-<li>Suddividi i gruppi muscolari in modo equilibrato.</li>
-<li>Progressione graduale nel tempo.</li>
-</ul>
+    <section>
+      <h3>Esempio di split settimanale</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Giorno</th>
+            <th>Muscoli</th>
+            <th>Focus principale</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Lunedì</td>
+            <td>Petto - Tricipiti</td>
+            <td>Panca piana, croci, dips</td>
+          </tr>
+          <tr>
+            <td>Mercoledì</td>
+            <td>Schiena - Bicipiti</td>
+            <td>Rematore, trazioni, curl</td>
+          </tr>
+          <tr>
+            <td>Venerdì</td>
+            <td>Gambe - Spalle</td>
+            <td>Squat, affondi, military press</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
 
+    <p style="margin-top: 2rem; font-size: 1.05rem;">
+      Prosegui su <a href="scheda-allenamento/workouts.html">Esercizi</a> per vedere esercizi pratici e schemi di allenamento.
+    </p>
+  </main>
 
-<h3>Esempio di split settimanale</h3>
-<table>
-<thead>
-<tr>
-<th>Giorno</th>
-<th>Muscoli</th>
-<th>Esercizi</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Lunedì</td>
-<td>Petto - Tricipiti</td>
-<td>Panca piana, Croci, Dips</td>
-</tr>
-<tr>
-<td>Mercoledì</td>
-<td>Schiena - Bicipiti</td>
-<td>Rematore, Trazioni, Curl</td>
-</tr>
-<tr>
-<td>Venerdì</td>
-<td>Gambe - Spalle</td>
-<td>Squat, Affondi, Military Press</td>
-</tr>
-</tbody>
-</table>
-
-
-<p>Prosegui su <a href="scheda-allenamento/workouts.html">Esercizi</a> per esempi pratici.</p>
-</main>
-
-
-<footer>
-<p>© 2025 - Mini Sito Allenamento</p>
-</footer>
+  <footer>
+    <p>© 2025 - Mini Sito Allenamento</p>
+  </footer>
 </body>
 </html>
