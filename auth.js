@@ -1,6 +1,9 @@
 (function () {
   const USERS_KEY = 'moonflow-users';
   const CURRENT_USER_KEY = 'moonflow-current-user';
+  const CURRENT_ROLE_KEY = 'moonflow-current-role';
+  const PARTNER_PAYLOAD_KEY = 'moonflow-partner-payload';
+  const ACCESS_CODES_KEY = 'moonflow-access-codes';
 
   function defaults() {
     return {
@@ -51,8 +54,39 @@
     localStorage.setItem(CURRENT_USER_KEY, username);
   }
 
+  function setCurrentRole(role) {
+    localStorage.setItem(CURRENT_ROLE_KEY, role || 'owner');
+  }
+
+  function getCurrentRole() {
+    return localStorage.getItem(CURRENT_ROLE_KEY) || 'owner';
+  }
+
+  function clearCurrentRole() {
+    localStorage.removeItem(CURRENT_ROLE_KEY);
+  }
+
+  function setPartnerPayload(payload) {
+    if (!payload) {
+      localStorage.removeItem(PARTNER_PAYLOAD_KEY);
+      return;
+    }
+    localStorage.setItem(PARTNER_PAYLOAD_KEY, JSON.stringify(payload));
+  }
+
+  function getPartnerPayload() {
+    try {
+      const raw = localStorage.getItem(PARTNER_PAYLOAD_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  }
+
   function clearCurrentUser() {
     localStorage.removeItem(CURRENT_USER_KEY);
+    clearCurrentRole();
+    localStorage.removeItem(PARTNER_PAYLOAD_KEY);
   }
 
   function getProfile(username) {
@@ -81,10 +115,55 @@
     const user = users[username];
     if (!user || user.password !== password) return false;
     setCurrentUser(username);
+    setCurrentRole('owner');
+    localStorage.removeItem(PARTNER_PAYLOAD_KEY);
+    return true;
+  }
+
+  function getAccessCodes() {
+    try {
+      return JSON.parse(localStorage.getItem(ACCESS_CODES_KEY) || '{}');
+    } catch {
+      return {};
+    }
+  }
+
+  function saveAccessCodes(codes) {
+    localStorage.setItem(ACCESS_CODES_KEY, JSON.stringify(codes));
+  }
+
+  function createAccessCode(ownerUsername, payload) {
+    const code = `MOONFLOW-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+    const codes = getAccessCodes();
+    codes[code] = {
+      owner: ownerUsername || 'owner',
+      payload: payload || defaults(),
+      createdAt: new Date().toISOString()
+    };
+    saveAccessCodes(codes);
+    return code;
+  }
+
+  function getAccessCodePayload(code) {
+    const normalized = (code || '').trim();
+    if (!normalized) return null;
+    const codes = getAccessCodes();
+    return codes[normalized] || null;
+  }
+
+  function loginAsPartner(accessCode) {
+    const access = getAccessCodePayload(accessCode);
+    if (!access || !access.payload) return false;
+
+    localStorage.removeItem(CURRENT_USER_KEY);
+    setCurrentRole('partner');
+    setPartnerPayload(access.payload);
     return true;
   }
 
   function updateCurrentData(partial) {
+    if (getCurrentRole() === 'partner') return false;
+
     const current = getCurrentUser();
     const users = getUsers();
     if (!current || !users[current]) return false;
@@ -99,6 +178,11 @@
   }
 
   function getCurrentData() {
+    if (getCurrentRole() === 'partner') {
+      const partnerPayload = getPartnerPayload();
+      return partnerPayload || defaults();
+    }
+
     const profile = getCurrentProfile();
     return profile ? profile.data : defaults();
   }
@@ -120,13 +204,21 @@
     saveUsers,
     getCurrentUser,
     setCurrentUser,
+    getCurrentRole,
+    setCurrentRole,
     clearCurrentUser,
     createUser,
     loginUser,
+    loginAsPartner,
+    getProfile,
     getCurrentProfile,
     getCurrentData,
     updateCurrentData,
     ensureProfile,
-    getProfile
+    getAccessCodePayload,
+    createAccessCode,
+    setPartnerPayload,
+    getPartnerPayload,
+    clearCurrentRole
   };
 })();
