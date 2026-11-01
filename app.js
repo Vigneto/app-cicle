@@ -1,6 +1,7 @@
 (function () {
   const Auth = window.MoonFlowAuth;
   const Diary = window.MoonFlowDiary;
+  let viewedMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 
   function formatShortDate(dateString) {
     if (!dateString) return '—';
@@ -22,17 +23,16 @@
     const calendar = document.querySelector('.calendar');
     if (!monthButton || !calendar) return;
 
-    const now = new Date();
-    const monthName = new Intl.DateTimeFormat('it-IT', { month: 'long' }).format(now);
+    const monthName = new Intl.DateTimeFormat('it-IT', { month: 'long' }).format(viewedMonth);
     monthButton.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
 
     const data = getState() || {};
     const cycleLength = Number(data.cycleLength) || 28;
     const periodLength = Number(data.periodLength) || 5;
     const lastPeriodValue = data.lastPeriod ? new Date(data.lastPeriod + 'T12:00:00') : null;
-
-    const year = now.getFullYear();
-    const month = now.getMonth();
+    const today = new Date();
+    const year = viewedMonth.getFullYear();
+    const month = viewedMonth.getMonth();
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const firstWeekday = (firstDay.getDay() + 6) % 7;
@@ -70,16 +70,19 @@
 
     const renderedCells = cells.map(({ day, muted, date }) => {
       const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-      const currentDateString = `${localDate.getFullYear()}-${String(localDate.getMonth() + 1).padStart(2, '0')}-${String(localDate.getDate()).padStart(2, '0')}`;
-
       let className = 'day';
+
       if (muted) className += ' muted';
 
-      if (lastPeriodValue) {
+      if (localDate.toDateString() === today.toDateString()) {
+        className += ' today';
+      }
+
+      if (lastPeriodValue && !muted) {
         const diffDays = Math.floor((localDate - lastPeriodValue) / 86400000);
         const inPeriod = diffDays >= 0 && diffDays < periodLength;
-        const inFertileWindow = diffDays >= cycleLength - 7 && diffDays <= cycleLength;
-        const inPeakWindow = diffDays >= cycleLength - 3 && diffDays <= cycleLength;
+        const inFertileWindow = diffDays >= 0 && diffDays >= cycleLength - 7 && diffDays <= cycleLength;
+        const inPeakWindow = diffDays >= 0 && diffDays >= cycleLength - 3 && diffDays <= cycleLength;
 
         if (inPeriod) className += ' active';
         else if (inFertileWindow) className += ' fertile';
@@ -479,11 +482,31 @@
     });
   }
 
+  function bindCalendarNavigation() {
+    const prevBtn = document.getElementById('calendar-prev-btn');
+    const nextBtn = document.getElementById('calendar-next-btn');
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        viewedMonth = new Date(viewedMonth.getFullYear(), viewedMonth.getMonth() - 1, 1);
+        renderCalendar();
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        viewedMonth = new Date(viewedMonth.getFullYear(), viewedMonth.getMonth() + 1, 1);
+        renderCalendar();
+      });
+    }
+  }
+
   function init() {
     bindAuth();
     bindCycleForm();
     bindDiary();
     bindShare();
+    bindCalendarNavigation();
     setAuthRole('owner');
     renderAuthState();
 
