@@ -23,7 +23,6 @@
   function addDiaryEntry(text, mood) {
     if (getAuth() && getAuth().getCurrentRole && getAuth().getCurrentRole() === 'partner') return;
     if (!ensureCurrentUser()) return;
-
     const data = readData();
     const nextEntry = {
       id: Date.now(),
@@ -40,7 +39,6 @@
   function addHistoryEntry(note, cycleLength) {
     if (getAuth() && getAuth().getCurrentRole && getAuth().getCurrentRole() === 'partner') return;
     if (!ensureCurrentUser()) return;
-
     const data = readData();
     const entry = {
       date: data.lastPeriod || new Date().toISOString(),
@@ -73,6 +71,7 @@
   }
 
   function shareAll() {
+    if (getAuth() && getAuth().getCurrentRole && getAuth().getCurrentRole() === 'partner') return '';
     const auth = getAuth();
     const payload = getSharePayload('all');
     if (!payload) return '';
@@ -85,6 +84,7 @@
   }
 
   function shareSelected() {
+    if (getAuth() && getAuth().getCurrentRole && getAuth().getCurrentRole() === 'partner') return '';
     const auth = getAuth();
     if (!ensureCurrentUser()) return '';
 
@@ -108,7 +108,7 @@
   }
 
   function importSharedCode(raw) {
-    if (!raw) return false;
+    if (!raw || (getAuth() && getAuth().getCurrentRole && getAuth().getCurrentRole() === 'partner')) return false;
 
     const auth = getAuth();
     if (!auth) return false;
