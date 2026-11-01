@@ -115,72 +115,101 @@
     const phase = getPhaseLabel(cycleDay, cycleLength, Number(data.periodLength) || 5);
     const forecast = getForecast(data);
 
-    document.getElementById('last-period-value').textContent = formatShortDate(data.lastPeriod);
-    document.getElementById('cycle-length-display').textContent = `${cycleLength} giorni`;
-    document.getElementById('energy-display').textContent = Number(data.sleepHours) >= 8 ? '5/5' : '4/5';
-    document.getElementById('fertility-display').textContent = `${Math.max(cycleLength - 7, 1)} giorni`;
-    document.querySelector('.phase-badge').textContent = phase;
+    const lastPeriodValue = document.getElementById('last-period-value');
+    const cycleLengthDisplay = document.getElementById('cycle-length-display');
+    const energyDisplay = document.getElementById('energy-display');
+    const fertilityDisplay = document.getElementById('fertility-display');
+    const phaseBadge = document.querySelector('.phase-badge');
+    const ovulationValue = document.getElementById('ovulation-value');
+    const ringValue = document.querySelector('.ring-value');
+
+    if (lastPeriodValue) lastPeriodValue.textContent = formatShortDate(data.lastPeriod);
+    if (cycleLengthDisplay) cycleLengthDisplay.textContent = `${cycleLength} giorni`;
+    if (energyDisplay) energyDisplay.textContent = Number(data.sleepHours) >= 8 ? '5/5' : '4/5';
+    if (fertilityDisplay) fertilityDisplay.textContent = `${Math.max(cycleLength - 7, 1)} giorni`;
+    if (phaseBadge) phaseBadge.textContent = phase;
 
     const ovulationDate = new Date(new Date(data.lastPeriod + 'T12:00:00').getTime() + ((cycleLength - 14) * 86400000));
-    document.getElementById('ovulation-value').textContent = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'short' }).format(ovulationDate);
-    document.querySelector('.ring-value').textContent = Math.round(Math.min(Math.max(cycleLength - cycleDay, 1), cycleLength));
+    if (ovulationValue) ovulationValue.textContent = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'short' }).format(ovulationDate);
+    if (ringValue) ringValue.textContent = Math.round(Math.min(Math.max(cycleLength - cycleDay, 1), cycleLength));
 
-    document.getElementById('flow-value').textContent = data.symptomLevel === 'Leggeri' ? 'Moderato' : data.symptomLevel === 'Moderati' ? 'Intenso' : 'Alto';
-    document.getElementById('flow-meta').textContent = `${Number(data.periodLength) || 5}/5 · ${(Number(data.periodLength) || 5) + 1} giorni previsti`;
-    document.getElementById('symptom-value').textContent = data.symptomLevel;
-    document.getElementById('symptom-meta').textContent = data.noteText || 'Nessun sintomo registrato';
-    document.getElementById('sleep-value').textContent = `${Number(data.sleepHours) || 8}h`;
-    document.getElementById('sleep-meta').textContent = 'Qualità del riposo personale';
-    document.getElementById('wellness-value').textContent = Number(data.sleepHours) >= 8 ? 'Buona' : 'Media';
-    document.getElementById('wellness-meta').textContent = 'Ritmo regolare e recupero ottimale';
+    const flowValue = document.getElementById('flow-value');
+    const flowMeta = document.getElementById('flow-meta');
+    const symptomValue = document.getElementById('symptom-value');
+    const symptomMeta = document.getElementById('symptom-meta');
+    const sleepValue = document.getElementById('sleep-value');
+    const sleepMeta = document.getElementById('sleep-meta');
+    const wellnessValue = document.getElementById('wellness-value');
+    const wellnessMeta = document.getElementById('wellness-meta');
 
-    document.getElementById('average-cycle').textContent = `${forecast.averageCycle}d`;
-    document.getElementById('next-cycle').textContent = forecast.nextCycleIn === 0 ? 'Oggi' : `${forecast.nextCycleIn}d`;
-    document.getElementById('delay-score').textContent = `${forecast.expectedDelay}d`;
-    document.getElementById('forecast-next').textContent = forecast.nextCycleIn === 0 ? 'Oggi' : `Tra ${forecast.nextCycleIn} giorni`;
-    document.getElementById('forecast-delay').textContent = forecast.expectedDelay > 0 ? `Ritardo ${forecast.expectedDelay} giorni` : 'Nessun ritardo';
+    if (flowValue) flowValue.textContent = data.symptomLevel === 'Leggeri' ? 'Moderato' : data.symptomLevel === 'Moderati' ? 'Intenso' : 'Alto';
+    if (flowMeta) flowMeta.textContent = `${Number(data.periodLength) || 5}/5 · ${(Number(data.periodLength) || 5) + 1} giorni previsti`;
+    if (symptomValue) symptomValue.textContent = data.symptomLevel;
+    if (symptomMeta) symptomMeta.textContent = data.noteText || 'Nessun sintomo registrato';
+    if (sleepValue) sleepValue.textContent = `${Number(data.sleepHours) || 8}h`;
+    if (sleepMeta) sleepMeta.textContent = 'Qualità del riposo personale';
+    if (wellnessValue) wellnessValue.textContent = Number(data.sleepHours) >= 8 ? 'Buona' : 'Media';
+    if (wellnessMeta) wellnessMeta.textContent = 'Ritmo regolare e recupero ottimale';
+
+    const averageCycle = document.getElementById('average-cycle');
+    const nextCycle = document.getElementById('next-cycle');
+    const delayScore = document.getElementById('delay-score');
+    const forecastNext = document.getElementById('forecast-next');
+    const forecastDelay = document.getElementById('forecast-delay');
+    if (averageCycle) averageCycle.textContent = `${forecast.averageCycle}d`;
+    if (nextCycle) nextCycle.textContent = forecast.nextCycleIn === 0 ? 'Oggi' : `${forecast.nextCycleIn}d`;
+    if (delayScore) delayScore.textContent = `${forecast.expectedDelay}d`;
+    if (forecastNext) forecastNext.textContent = forecast.nextCycleIn === 0 ? 'Oggi' : `Tra ${forecast.nextCycleIn} giorni`;
+    if (forecastDelay) forecastDelay.textContent = forecast.expectedDelay > 0 ? `Ritardo ${forecast.expectedDelay} giorni` : 'Nessun ritardo';
 
     renderHistoryList(data);
     renderDiaryList(data);
     renderSharedList(data);
-
-    const notesList = document.getElementById('notes-list');
-    if (notesList) {
-      notesList.innerHTML = `
-        <li>
-          <span class="note-time">Oggi</span>
-          <strong>${(data.noteTitle || 'Nota del giorno').trim()}</strong>
-          <small>${(data.noteText || 'Nessun dettaglio aggiunto').trim()}</small>
-        </li>
-      `;
-    }
-
-    const reminderList = document.getElementById('reminder-list');
-    if (reminderList) {
-      reminderList.innerHTML = `
-        <li>
-          <span class="reminder-dot"></span>
-          <div>
-            <strong>${data.reminderText || 'Promemoria personale'}</strong>
-            <small>Ricorda di controllare il tuo benessere oggi.</small>
-          </div>
-        </li>
-      `;
-    }
   }
 
   function populateForm() {
     const data = getState();
     if (!data) return;
 
-    document.getElementById('lastPeriod').value = data.lastPeriod || '';
-    document.getElementById('cycleLength').value = data.cycleLength || 28;
-    document.getElementById('periodLength').value = data.periodLength || 5;
-    document.getElementById('symptomLevel').value = data.symptomLevel || 'Leggeri';
-    document.getElementById('noteTitle').value = data.noteTitle || '';
-    document.getElementById('noteText').value = data.noteText || '';
-    document.getElementById('reminderText').value = data.reminderText || '';
-    document.getElementById('sleepHours').value = data.sleepHours || 8;
+    const lastPeriod = document.getElementById('lastPeriod');
+    const cycleLength = document.getElementById('cycleLength');
+    const periodLength = document.getElementById('periodLength');
+    const symptomLevel = document.getElementById('symptomLevel');
+    const noteTitle = document.getElementById('noteTitle');
+    const noteText = document.getElementById('noteText');
+    const reminderText = document.getElementById('reminderText');
+    const sleepHours = document.getElementById('sleepHours');
+
+    if (lastPeriod) lastPeriod.value = data.lastPeriod || '';
+    if (cycleLength) cycleLength.value = data.cycleLength || 28;
+    if (periodLength) periodLength.value = data.periodLength || 5;
+    if (symptomLevel) symptomLevel.value = data.symptomLevel || 'Leggeri';
+    if (noteTitle) noteTitle.value = data.noteTitle || '';
+    if (noteText) noteText.value = data.noteText || '';
+    if (reminderText) reminderText.value = data.reminderText || '';
+    if (sleepHours) sleepHours.value = data.sleepHours || 8;
+  }
+
+  function setAuthRole(role) {
+    const roleButtons = document.querySelectorAll('.role-btn');
+    const partnerWrap = document.getElementById('partner-code-wrap');
+    const submit = document.getElementById('auth-submit');
+    const isPartner = role === 'partner';
+
+    roleButtons.forEach((button) => {
+      button.classList.toggle('active', (button.dataset.role || 'owner') === role);
+    });
+
+    if (partnerWrap) partnerWrap.classList.toggle('hidden', !isPartner);
+    const username = document.getElementById('username');
+    const password = document.getElementById('password');
+    const partnerCode = document.getElementById('partner-code');
+    if (username) username.required = !isPartner;
+    if (password) password.required = !isPartner;
+    if (partnerCode) partnerCode.required = isPartner;
+
+    const activeMode = document.querySelector('.tab-btn.active')?.dataset.mode || 'login';
+    if (submit) submit.textContent = isPartner ? 'Accedi con codice' : (activeMode === 'register' ? 'Registrati' : 'Accedi');
   }
 
   function renderAuthState() {
@@ -194,47 +223,23 @@
     const logoutBtn = document.getElementById('logout-btn');
 
     if (role === 'partner' && partnerPayload) {
-      authShell.classList.add('hidden');
-      appShell.classList.remove('hidden');
-      badge.classList.remove('hidden');
-      logoutBtn.classList.remove('hidden');
-      name.textContent = 'Partner';
+      if (authShell) authShell.classList.add('hidden');
+      if (appShell) appShell.classList.remove('hidden');
+      if (badge) badge.classList.remove('hidden');
+      if (logoutBtn) logoutBtn.classList.remove('hidden');
+      if (name) name.textContent = 'Partner';
     } else if (current) {
-      authShell.classList.add('hidden');
-      appShell.classList.remove('hidden');
-      badge.classList.remove('hidden');
-      logoutBtn.classList.remove('hidden');
-      name.textContent = current;
+      if (authShell) authShell.classList.add('hidden');
+      if (appShell) appShell.classList.remove('hidden');
+      if (badge) badge.classList.remove('hidden');
+      if (logoutBtn) logoutBtn.classList.remove('hidden');
+      if (name) name.textContent = current;
     } else {
-      authShell.classList.remove('hidden');
-      appShell.classList.add('hidden');
-      badge.classList.add('hidden');
-      logoutBtn.classList.add('hidden');
-      name.textContent = 'Utente';
-    }
-  }
-
-  function setAuthRole(role) {
-    const roleButtons = document.querySelectorAll('.role-btn');
-    const partnerWrap = document.getElementById('partner-code-wrap');
-    const submit = document.getElementById('auth-submit');
-    const tabs = document.querySelectorAll('.tab-btn');
-
-    roleButtons.forEach((button) => button.classList.toggle('active', (button.dataset.role || 'owner') === role));
-    const isPartner = role === 'partner';
-    partnerWrap.classList.toggle('hidden', !isPartner);
-    document.getElementById('username').required = !isPartner;
-    document.getElementById('password').required = !isPartner;
-
-    if (isPartner) {
-      tabs.forEach((tab) => {
-        if (tab.dataset.mode === 'register') tab.classList.remove('active');
-        if (tab.dataset.mode === 'login') tab.classList.add('active');
-      });
-      submit.textContent = 'Accedi con codice';
-      document.getElementById('partner-code').focus();
-    } else {
-      submit.textContent = document.querySelector('.tab-btn.active')?.dataset.mode === 'register' ? 'Registrati' : 'Accedi';
+      if (authShell) authShell.classList.remove('hidden');
+      if (appShell) appShell.classList.add('hidden');
+      if (badge) badge.classList.add('hidden');
+      if (logoutBtn) logoutBtn.classList.add('hidden');
+      if (name) name.textContent = 'Utente';
     }
   }
 
@@ -249,7 +254,7 @@
         const mode = button.dataset.mode || 'login';
         const submit = document.getElementById('auth-submit');
         const currentRole = document.querySelector('.role-btn.active')?.dataset.role || 'owner';
-        submit.textContent = currentRole === 'partner' ? 'Accedi con codice' : (mode === 'register' ? 'Registrati' : 'Accedi');
+        if (submit) submit.textContent = currentRole === 'partner' ? 'Accedi con codice' : (mode === 'register' ? 'Registrati' : 'Accedi');
       });
     });
 
@@ -274,6 +279,7 @@
         }
 
         document.getElementById('auth-form').reset();
+        setAuthRole('partner');
         renderAuthState();
         populateForm();
         updateDashboard();
