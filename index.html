@@ -29,13 +29,15 @@
         margin-top: 28px;
       }
 
-      .auth-tabs {
+      .auth-tabs,
+      .auth-role-switch {
         display: flex;
         gap: 10px;
         padding: 18px 18px 0;
       }
 
-      .tab-btn {
+      .tab-btn,
+      .role-btn {
         border: 1px solid rgba(146,87,98,0.12);
         background: rgba(255,255,255,0.7);
         border-radius: 12px 12px 0 0;
@@ -45,10 +47,17 @@
         cursor: pointer;
       }
 
-      .tab-btn.active {
+      .tab-btn.active,
+      .role-btn.active {
         background: linear-gradient(135deg, rgba(255,240,245,0.92), rgba(255,255,255,0.92));
         color: var(--rose-700);
         border-color: rgba(146,87,98,0.18);
+      }
+
+      .role-btn {
+        border-radius: 12px;
+        padding: 10px 18px;
+        flex: 1;
       }
 
       .auth-card {
@@ -263,6 +272,11 @@
 
       <main>
         <section id="auth-shell" class="auth-shell">
+          <div class="auth-role-switch" aria-label="Scegli il tipo di accesso">
+            <button type="button" class="role-btn active" data-role="owner">Proprietario</button>
+            <button type="button" class="role-btn" data-role="partner">Partner</button>
+          </div>
+
           <div class="auth-tabs">
             <button type="button" class="tab-btn active" data-mode="login">Accedi</button>
             <button type="button" class="tab-btn" data-mode="register">Registrati</button>
@@ -278,6 +292,11 @@
               <div class="form-field full">
                 <label for="password">Password</label>
                 <input id="password" name="password" type="password" placeholder="Inserisci la password" required />
+              </div>
+
+              <div id="partner-code-wrap" class="form-field full hidden">
+                <label for="partner-code">Codice di accesso</label>
+                <input id="partner-code" name="partnerCode" type="text" placeholder="Inserisci il codice generato dal proprietario" />
               </div>
 
               <div class="form-actions">
