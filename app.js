@@ -184,14 +184,22 @@
   }
 
   function renderAuthState() {
+    const role = Auth && Auth.getCurrentRole ? Auth.getCurrentRole() : 'owner';
     const current = Auth && Auth.getCurrentUser ? Auth.getCurrentUser() : null;
+    const partnerPayload = Auth && Auth.getPartnerPayload ? Auth.getPartnerPayload() : null;
     const authShell = document.getElementById('auth-shell');
     const appShell = document.getElementById('app-shell');
     const badge = document.getElementById('account-badge');
     const name = document.getElementById('account-name');
     const logoutBtn = document.getElementById('logout-btn');
 
-    if (current) {
+    if (role === 'partner' && partnerPayload) {
+      authShell.classList.add('hidden');
+      appShell.classList.remove('hidden');
+      badge.classList.remove('hidden');
+      logoutBtn.classList.remove('hidden');
+      name.textContent = 'Partner';
+    } else if (current) {
       authShell.classList.add('hidden');
       appShell.classList.remove('hidden');
       badge.classList.remove('hidden');
@@ -202,16 +210,46 @@
       appShell.classList.add('hidden');
       badge.classList.add('hidden');
       logoutBtn.classList.add('hidden');
+      name.textContent = 'Utente';
+    }
+  }
+
+  function setAuthRole(role) {
+    const roleButtons = document.querySelectorAll('.role-btn');
+    const partnerWrap = document.getElementById('partner-code-wrap');
+    const submit = document.getElementById('auth-submit');
+    const tabs = document.querySelectorAll('.tab-btn');
+
+    roleButtons.forEach((button) => button.classList.toggle('active', (button.dataset.role || 'owner') === role));
+    const isPartner = role === 'partner';
+    partnerWrap.classList.toggle('hidden', !isPartner);
+    document.getElementById('username').required = !isPartner;
+    document.getElementById('password').required = !isPartner;
+
+    if (isPartner) {
+      tabs.forEach((tab) => {
+        if (tab.dataset.mode === 'register') tab.classList.remove('active');
+        if (tab.dataset.mode === 'login') tab.classList.add('active');
+      });
+      submit.textContent = 'Accedi con codice';
+      document.getElementById('partner-code').focus();
+    } else {
+      submit.textContent = document.querySelector('.tab-btn.active')?.dataset.mode === 'register' ? 'Registrati' : 'Accedi';
     }
   }
 
   function bindAuth() {
+    document.querySelectorAll('.role-btn').forEach((button) => {
+      button.addEventListener('click', () => setAuthRole(button.dataset.role || 'owner'));
+    });
+
     document.querySelectorAll('.tab-btn').forEach((button) => {
       button.addEventListener('click', () => {
         document.querySelectorAll('.tab-btn').forEach((btn) => btn.classList.toggle('active', btn === button));
         const mode = button.dataset.mode || 'login';
         const submit = document.getElementById('auth-submit');
-        submit.textContent = mode === 'register' ? 'Registrati' : 'Accedi';
+        const currentRole = document.querySelector('.role-btn.active')?.dataset.role || 'owner';
+        submit.textContent = currentRole === 'partner' ? 'Accedi con codice' : (mode === 'register' ? 'Registrati' : 'Accedi');
       });
     });
 
@@ -219,7 +257,28 @@
       event.preventDefault();
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
+      const partnerCode = document.getElementById('partner-code').value.trim();
+      const role = document.querySelector('.role-btn.active')?.dataset.role || 'owner';
       const mode = document.querySelector('.tab-btn.active')?.dataset.mode || 'login';
+
+      if (role === 'partner') {
+        if (!partnerCode) {
+          alert('Inserisci il codice generato dal proprietario dell\'account.');
+          return;
+        }
+
+        const ok = Auth.loginAsPartner(partnerCode);
+        if (!ok) {
+          alert('Codice non valido o scaduto. Richiedi un nuovo codice al proprietario dell\'account.');
+          return;
+        }
+
+        document.getElementById('auth-form').reset();
+        renderAuthState();
+        populateForm();
+        updateDashboard();
+        return;
+      }
 
       if (!username || !password) {
         alert('Inserisci username e password.');
@@ -233,6 +292,7 @@
           return;
         }
         Auth.setCurrentUser(username);
+        Auth.setCurrentRole('owner');
       } else {
         const ok = Auth.loginUser(username, password);
         if (!ok) {
@@ -251,6 +311,8 @@
 
     document.getElementById('logout-btn').addEventListener('click', function () {
       Auth.clearCurrentUser();
+      document.getElementById('partner-code').value = '';
+      setAuthRole('owner');
       renderAuthState();
     });
   }
@@ -258,6 +320,8 @@
   function bindCycleForm() {
     document.getElementById('cycle-form').addEventListener('submit', function (event) {
       event.preventDefault();
+      if (Auth.getCurrentRole && Auth.getCurrentRole() === 'partner') return;
+
       const form = new FormData(event.currentTarget);
       const update = {
         lastPeriod: form.get('lastPeriod') || Auth.defaults().lastPeriod,
@@ -275,6 +339,7 @@
     });
 
     document.getElementById('add-history-btn').addEventListener('click', function () {
+      if (Auth.getCurrentRole && Auth.getCurrentRole() === 'partner') return;
       const data = getState();
       Diary.addHistoryEntry(data.noteText || 'Ciclo registrato.', data.cycleLength);
       updateDashboard();
@@ -283,6 +348,7 @@
 
   function bindDiary() {
     document.getElementById('journal-save-btn').addEventListener('click', function () {
+      if (Auth.getCurrentRole && Auth.getCurrentRole() === 'partner') return;
       const text = document.getElementById('journal-entry').value.trim();
       const mood = document.getElementById('mood-select').value;
       if (!text) return;
@@ -294,11 +360,13 @@
 
   function bindShare() {
     document.getElementById('share-all-btn').addEventListener('click', function () {
+      if (Auth.getCurrentRole && Auth.getCurrentRole() === 'partner') return;
       const code = Diary.shareAll();
       document.getElementById('share-output').value = code;
     });
 
     document.getElementById('share-selected-btn').addEventListener('click', function () {
+      if (Auth.getCurrentRole && Auth.getCurrentRole() === 'partner') return;
       const code = Diary.shareSelected();
       document.getElementById('share-output').value = code;
     });
@@ -314,10 +382,12 @@
     });
 
     document.getElementById('import-share-btn').addEventListener('click', function () {
+      if (Auth.getCurrentRole && Auth.getCurrentRole() === 'partner') return;
       const code = document.getElementById('share-import').value.trim();
       if (!code) return;
       const ok = Diary.importSharedCode(code);
       if (ok) {
+        renderAuthState();
         updateDashboard();
         document.getElementById('share-import').value = '';
       } else {
@@ -331,6 +401,7 @@
     bindCycleForm();
     bindDiary();
     bindShare();
+    setAuthRole('owner');
     renderAuthState();
 
     if (Auth.getCurrentUser()) {
