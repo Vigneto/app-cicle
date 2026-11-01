@@ -5,6 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MoonFlow | Traccia il tuo ciclo</title>
     <link rel="stylesheet" href="style.css" />
+    <style>
+      .data-entry {
+        margin-top: 26px;
+      }
+
+      .data-form {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .form-field label {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .form-field input,
+      .form-field textarea,
+      .form-field select {
+        width: 100%;
+        border: 1px solid rgba(126, 81, 91, 0.15);
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 14px;
+        padding: 12px 14px;
+        font: inherit;
+        color: var(--text);
+      }
+
+      .form-field textarea {
+        min-height: 110px;
+        resize: vertical;
+      }
+
+      .form-actions {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      @media (max-width: 640px) {
+        .data-form {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
   </head>
   <body>
     <div class="page-shell">
@@ -42,15 +108,15 @@
 
             <ul class="mini-stats">
               <li>
-                <strong>28 giorni</strong>
+                <strong id="cycle-length-display">28 giorni</strong>
                 <span>Durata media</span>
               </li>
               <li>
-                <strong>5/5</strong>
+                <strong id="energy-display">5/5</strong>
                 <span>Livello energia</span>
               </li>
               <li>
-                <strong>3 giorni</strong>
+                <strong id="fertility-display">3 giorni</strong>
                 <span>Fase fertile</span>
               </li>
             </ul>
@@ -60,7 +126,7 @@
             <div class="visual-card">
               <div class="card-header">
                 <span>Fase attuale</span>
-                <span class="tag">Fertile</span>
+                <span class="tag phase-badge">Fertile</span>
               </div>
 
               <div class="ring-wrap">
@@ -75,11 +141,11 @@
               <div class="cycle-meta">
                 <div>
                   <label>Ultima mestruazione</label>
-                  <strong>25 ago</strong>
+                  <strong id="last-period-value">25 ago</strong>
                 </div>
                 <div>
                   <label>Ovulazione</label>
-                  <strong>11 set</strong>
+                  <strong id="ovulation-value">11 set</strong>
                 </div>
               </div>
             </div>
@@ -89,27 +155,83 @@
         <section class="stats-grid" aria-label="Statistiche principali">
           <article class="stat-card accent">
             <span class="stat-title">Flusso</span>
-            <strong>Moderato</strong>
-            <small>3/5 · 4 giorni previsti</small>
+            <strong id="flow-value">Moderato</strong>
+            <small id="flow-meta">3/5 · 4 giorni previsti</small>
           </article>
 
           <article class="stat-card">
             <span class="stat-title">Sintomi</span>
-            <strong>Leggeri</strong>
-            <small>Dolore minimo e umore stabile</small>
+            <strong id="symptom-value">Leggeri</strong>
+            <small id="symptom-meta">Dolore minimo e umore stabile</small>
           </article>
 
           <article class="stat-card">
             <span class="stat-title">Sonno</span>
-            <strong>8h</strong>
-            <small>Qualità buona nelle ultime 7 notti</small>
+            <strong id="sleep-value">8h</strong>
+            <small id="sleep-meta">Qualità buona nelle ultime 7 notti</small>
           </article>
 
           <article class="stat-card">
             <span class="stat-title">Salute</span>
-            <strong>Buona</strong>
-            <small>Ritmo regolare e recupero ottimale</small>
+            <strong id="wellness-value">Buona</strong>
+            <small id="wellness-meta">Ritmo regolare e recupero ottimale</small>
           </article>
+        </section>
+
+        <section class="panel data-entry" aria-labelledby="data-entry-title">
+          <div class="panel-header">
+            <h3 id="data-entry-title">I tuoi dati</h3>
+          </div>
+
+          <form id="cycle-form" class="data-form">
+            <div class="form-field">
+              <label for="lastPeriod">Data ultima mestruazione</label>
+              <input id="lastPeriod" name="lastPeriod" type="date" />
+            </div>
+
+            <div class="form-field">
+              <label for="cycleLength">Durata ciclo (giorni)</label>
+              <input id="cycleLength" name="cycleLength" type="number" min="20" max="40" value="28" />
+            </div>
+
+            <div class="form-field">
+              <label for="periodLength">Durata mestruazione (giorni)</label>
+              <input id="periodLength" name="periodLength" type="number" min="2" max="10" value="5" />
+            </div>
+
+            <div class="form-field">
+              <label for="symptomLevel">Sintomi</label>
+              <select id="symptomLevel" name="symptomLevel">
+                <option value="Leggeri">Leggeri</option>
+                <option value="Moderati">Moderati</option>
+                <option value="Forti">Forti</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label for="noteTitle">Titolo nota</label>
+              <input id="noteTitle" name="noteTitle" type="text" placeholder="Es. Energia alta" />
+            </div>
+
+            <div class="form-field">
+              <label for="noteText">Nota del giorno</label>
+              <textarea id="noteText" name="noteText" placeholder="Scrivi come ti senti oggi..."></textarea>
+            </div>
+
+            <div class="form-field">
+              <label for="reminderText">Promemoria</label>
+              <input id="reminderText" name="reminderText" type="text" placeholder="Es. Controlla lo stress" />
+            </div>
+
+            <div class="form-field">
+              <label for="sleepHours">Ore di sonno</label>
+              <input id="sleepHours" name="sleepHours" type="number" min="4" max="12" step="0.5" value="8" />
+            </div>
+
+            <div class="form-actions">
+              <button class="primary-btn" type="submit">Salva i miei dati</button>
+            </div>
+          </form>
         </section>
 
         <section class="content-grid" id="calendar">
@@ -182,7 +304,7 @@
               <button class="ghost-btn" type="button">+ nuova nota</button>
             </div>
 
-            <ul class="notes-list">
+            <ul class="notes-list" id="notes-list">
               <li>
                 <span class="note-time">Lun 09:00</span>
                 <strong>Energia alta</strong>
@@ -248,7 +370,7 @@
               <h3>Promemoria</h3>
             </div>
 
-            <ul class="reminder-list">
+            <ul class="reminder-list" id="reminder-list">
               <li>
                 <span class="reminder-dot"></span>
                 <div>
@@ -277,5 +399,152 @@
         </section>
       </main>
     </div>
+
+    <script>
+      const STORAGE_KEY = 'moonflow-cycle-data';
+
+      const defaults = {
+        lastPeriod: '2026-10-25',
+        cycleLength: 28,
+        periodLength: 5,
+        symptomLevel: 'Leggeri',
+        noteTitle: 'Energia alta',
+        noteText: 'Ho completato la sessione cardio senza affaticamento eccessivo.',
+        reminderText: 'Controlla lo stress',
+        sleepHours: 8
+      };
+
+      function safeParse(value, fallback) {
+        try {
+          return JSON.parse(value) ?? fallback;
+        } catch {
+          return fallback;
+        }
+      }
+
+      function getState() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        return saved ? { ...defaults, ...safeParse(saved, defaults) } : { ...defaults };
+      }
+
+      function saveState(data) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      }
+
+      function formatShortDate(dateString) {
+        if (!dateString) return '—';
+        const date = new Date(dateString + 'T12:00:00');
+        return new Intl.DateTimeFormat('it-IT', {
+          day: 'numeric',
+          month: 'short'
+        }).format(date);
+      }
+
+      function getCycleDay(lastPeriod, cycleLength) {
+        if (!lastPeriod) return 0;
+        const last = new Date(lastPeriod + 'T12:00:00');
+        const today = new Date();
+        const diffDays = Math.floor((today - last) / 86400000);
+        return Math.max(diffDays % cycleLength, 0);
+      }
+
+      function getPhaseLabel(cycleDay, cycleLength, periodLength) {
+        if (cycleDay >= 0 && cycleDay < periodLength) return 'Mestruazione';
+        if (cycleDay >= cycleLength - 7 && cycleDay <= cycleLength) return 'Fertile';
+        if (cycleDay >= cycleLength - 3) return 'Picco';
+        return 'Equilibrio';
+      }
+
+      function updateDashboard() {
+        const state = getState();
+
+        const cycleDay = getCycleDay(state.lastPeriod, Number(state.cycleLength) || 28);
+        const phase = getPhaseLabel(cycleDay, Number(state.cycleLength) || 28, Number(state.periodLength) || 5);
+
+        document.getElementById('last-period-value').textContent = formatShortDate(state.lastPeriod);
+        document.getElementById('cycle-length-display').textContent = `${Number(state.cycleLength) || 28} giorni`;
+        document.getElementById('energy-display').textContent = state.sleepHours >= 8 ? '5/5' : '4/5';
+        document.getElementById('fertility-display').textContent = `${Math.max((Number(state.cycleLength) || 28) - 7, 1)} giorni`;
+        document.querySelector('.phase-badge').textContent = phase;
+
+        const ovulationDate = new Date(new Date(state.lastPeriod + 'T12:00:00').getTime() + ((Number(state.cycleLength) || 28) - 14) * 86400000);
+        document.getElementById('ovulation-value').textContent = new Intl.DateTimeFormat('it-IT', {
+          day: 'numeric',
+          month: 'short'
+        }).format(ovulationDate);
+
+        const ringValue = Math.min(Math.max((Number(state.cycleLength) || 28) - cycleDay, 1), Number(state.cycleLength) || 28);
+        document.querySelector('.ring-value').textContent = Math.round(ringValue);
+        document.querySelector('.ring-value').nextElementSibling.textContent = 'giorni';
+
+        document.getElementById('flow-value').textContent = state.symptomLevel === 'Leggeri' ? 'Moderato' : state.symptomLevel === 'Moderati' ? 'Intenso' : 'Alto';
+        document.getElementById('flow-meta').textContent = `${Number(state.periodLength) || 5}/5 · ${(Number(state.periodLength) || 5) + 1} giorni previsti`;
+        document.getElementById('symptom-value').textContent = state.symptomLevel;
+        document.getElementById('symptom-meta').textContent = state.noteText || 'Nessun sintomo registrato';
+        document.getElementById('sleep-value').textContent = `${Number(state.sleepHours) || 8}h`;
+        document.getElementById('sleep-meta').textContent = 'Qualità del riposo personale';
+        document.getElementById('wellness-value').textContent = Number(state.sleepHours) >= 8 ? 'Buona' : 'Media';
+        document.getElementById('wellness-meta').textContent = 'Ritmo regolare e recupero ottimale';
+
+        const notesList = document.getElementById('notes-list');
+        if (notesList) {
+          const title = (state.noteTitle || 'Nota del giorno').trim();
+          const description = (state.noteText || 'Nessun dettaglio aggiunto').trim();
+          notesList.innerHTML = `
+            <li>
+              <span class="note-time">Oggi</span>
+              <strong>${title}</strong>
+              <small>${description}</small>
+            </li>
+          `;
+        }
+
+        const reminderList = document.getElementById('reminder-list');
+        if (reminderList) {
+          reminderList.innerHTML = `
+            <li>
+              <span class="reminder-dot"></span>
+              <div>
+                <strong>${state.reminderText || 'Promemoria personale'}</strong>
+                <small>Ricorda di controllare il tuo benessere oggi.</small>
+              </div>
+            </li>
+          `;
+        }
+      }
+
+      function populateForm() {
+        const state = getState();
+        document.getElementById('lastPeriod').value = state.lastPeriod || '';
+        document.getElementById('cycleLength').value = state.cycleLength || 28;
+        document.getElementById('periodLength').value = state.periodLength || 5;
+        document.getElementById('symptomLevel').value = state.symptomLevel || 'Leggeri';
+        document.getElementById('noteTitle').value = state.noteTitle || '';
+        document.getElementById('noteText').value = state.noteText || '';
+        document.getElementById('reminderText').value = state.reminderText || '';
+        document.getElementById('sleepHours').value = state.sleepHours || 8;
+      }
+
+      document.getElementById('cycle-form')?.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        const state = {
+          lastPeriod: formData.get('lastPeriod') || defaults.lastPeriod,
+          cycleLength: Number(formData.get('cycleLength')) || defaults.cycleLength,
+          periodLength: Number(formData.get('periodLength')) || defaults.periodLength,
+          symptomLevel: formData.get('symptomLevel') || defaults.symptomLevel,
+          noteTitle: formData.get('noteTitle') || defaults.noteTitle,
+          noteText: formData.get('noteText') || defaults.noteText,
+          reminderText: formData.get('reminderText') || defaults.reminderText,
+          sleepHours: Number(formData.get('sleepHours')) || defaults.sleepHours
+        };
+
+        saveState(state);
+        updateDashboard();
+      });
+
+      populateForm();
+      updateDashboard();
+    </script>
   </body>
 </html>
