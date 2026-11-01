@@ -51,22 +51,168 @@
         grid-column: 1 / -1;
         display: flex;
         justify-content: flex-end;
+        gap: 12px;
       }
 
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
+      .auth-shell {
+        margin-top: 24px;
+        background: rgba(255, 255, 255, 0.78);
+        border: 1px solid rgba(146, 87, 98, 0.12);
+        border-radius: 28px;
+        box-shadow: var(--shadow);
         overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
+      }
+
+      .auth-tabs {
+        display: flex;
+        gap: 10px;
+        padding: 16px 18px 0;
+      }
+
+      .tab-btn {
+        border: 1px solid rgba(146, 87, 98, 0.1);
+        background: rgba(255, 255, 255, 0.6);
+        color: var(--text-soft);
+        padding: 10px 16px;
+        border-radius: 12px 12px 0 0;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .tab-btn.active {
+        background: linear-gradient(135deg, rgba(255, 240, 245, 0.92), rgba(255,255,255,0.9));
+        color: var(--rose-700);
+        border-color: rgba(146, 87, 98, 0.18);
+      }
+
+      .auth-card {
+        padding: 24px 18px 18px;
+      }
+
+      .auth-form {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .auth-form .full {
+        grid-column: 1 / -1;
+      }
+
+      .account-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 12px;
+        border-radius: 999px;
+        background: rgba(255, 240, 245, 0.8);
+        color: var(--rose-700);
+        font-weight: 700;
+        gap: 8px;
+      }
+
+      .account-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .panel-header.row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .user-summary {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 18px;
+      }
+
+      .summary-box {
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(126, 81, 91, 0.12);
+        border-radius: 20px;
+        padding: 18px 16px;
+      }
+
+      .summary-box strong {
+        display: block;
+        font-size: 1.5rem;
+        letter-spacing: -0.06em;
+        margin-bottom: 4px;
+      }
+
+      .summary-box span {
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .diary-list,
+      .history-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 14px;
+      }
+
+      .diary-list li,
+      .history-list li {
+        padding: 14px 16px;
+        border-radius: 16px;
+        background: rgba(255,255,255,0.8);
+        border: 1px solid rgba(126, 81, 91, 0.08);
+      }
+
+      .diary-list strong,
+      .history-list strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .diary-list small,
+      .history-list small {
+        color: var(--text-soft);
+        line-height: 1.5;
+      }
+
+      .mini-form {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .mini-form textarea {
+        width: 100%;
+        min-height: 100px;
+        resize: vertical;
+        border: 1px solid rgba(126, 81, 91, 0.15);
+        border-radius: 14px;
+        padding: 12px 14px;
+        font: inherit;
+      }
+
+      @media (max-width: 980px) {
+        .user-summary {
+          grid-template-columns: 1fr;
+        }
       }
 
       @media (max-width: 640px) {
-        .data-form {
+        .data-form,
+        .auth-form {
+          grid-template-columns: 1fr;
+        }
+
+        .mini-form {
           grid-template-columns: 1fr;
         }
       }
@@ -83,327 +229,349 @@
         <nav class="main-nav" aria-label="Navigazione principale">
           <a href="#overview">Panoramica</a>
           <a href="#calendar">Calendario</a>
-          <a href="#insights">Andamento</a>
-          <a href="#habits">Abitudini</a>
+          <a href="#history">Cronologia</a>
+          <a href="#forecast">Previsioni</a>
+          <a href="#journal">Diario</a>
         </nav>
 
-        <button class="ghost-btn small-btn" type="button">Esporta</button>
+        <div id="account-actions" class="account-row">
+          <span id="account-pill" class="account-pill hidden">👤 <span id="account-name">Utente</span></span>
+          <button id="logout-btn" class="ghost-btn small-btn hidden" type="button">Esci</button>
+        </div>
       </header>
 
       <main>
-        <section class="hero" id="overview">
-          <div class="hero-copy">
-            <p class="eyebrow">wellness personale</p>
-            <h1>Traccia il tuo ciclo, capisci il tuo corpo.</h1>
-            <p class="lede">
-              Monitora flusso, sintomi, fertilità e routine con un solo sguardo.
-              Un calendario chiaro ti aiuta a sentirti in controllo ogni giorno,
-              senza stress e con maggiore consapevolezza.
-            </p>
-
-            <div class="cta-row">
-              <a class="primary-btn" href="#calendar">Apri il calendario</a>
-              <a class="secondary-btn" href="#habits">Aggiungi nota</a>
-            </div>
-
-            <ul class="mini-stats">
-              <li>
-                <strong id="cycle-length-display">28 giorni</strong>
-                <span>Durata media</span>
-              </li>
-              <li>
-                <strong id="energy-display">5/5</strong>
-                <span>Livello energia</span>
-              </li>
-              <li>
-                <strong id="fertility-display">3 giorni</strong>
-                <span>Fase fertile</span>
-              </li>
-            </ul>
+        <section class="auth-shell" id="auth-shell">
+          <div class="auth-tabs">
+            <button class="tab-btn active" type="button" data-mode="login">Accedi</button>
+            <button class="tab-btn" type="button" data-mode="register">Registrati</button>
           </div>
 
-          <div class="hero-visual">
-            <div class="visual-card">
-              <div class="card-header">
-                <span>Fase attuale</span>
-                <span class="tag phase-badge">Fertile</span>
+          <div class="auth-card">
+            <form id="auth-form" class="auth-form">
+              <div class="form-field full">
+                <label for="username">Nome utente</label>
+                <input id="username" name="username" type="text" placeholder="Inserisci il tuo nome utente" required>
               </div>
 
-              <div class="ring-wrap">
-                <div class="cycle-ring">
-                  <div class="ring-inner">
-                    <div class="ring-value">7</div>
-                    <small>giorni</small>
+              <div class="form-field full">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" placeholder="Inserisci la password" required>
+              </div>
+
+              <div class="form-actions full">
+                <button id="auth-submit" class="primary-btn" type="submit">Accedi</button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <div id="app-shell" class="hidden">
+          <section class="hero" id="overview">
+            <div class="hero-copy">
+              <p class="eyebrow">wellness personale</p>
+              <h1>Traccia il tuo ciclo, capisci il tuo corpo.</h1>
+              <p class="lede">
+                Monitora flusso, sintomi, fertilità e routine con un solo sguardo.
+                Un calendario chiaro ti aiuta a sentirti in controllo ogni giorno,
+                senza stress e con maggiore consapevolezza.
+              </p>
+
+              <div class="cta-row">
+                <a class="primary-btn" href="#calendar">Apri il calendario</a>
+                <a class="secondary-btn" href="#journal">Aggiungi nota</a>
+              </div>
+
+              <ul class="mini-stats">
+                <li>
+                  <strong id="cycle-length-display">28 giorni</strong>
+                  <span>Durata media</span>
+                </li>
+                <li>
+                  <strong id="energy-display">5/5</strong>
+                  <span>Livello energia</span>
+                </li>
+                <li>
+                  <strong id="fertility-display">3 giorni</strong>
+                  <span>Fase fertile</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="hero-visual">
+              <div class="visual-card">
+                <div class="card-header">
+                  <span>Fase attuale</span>
+                  <span class="tag phase-badge">Fertile</span>
+                </div>
+
+                <div class="ring-wrap">
+                  <div class="cycle-ring">
+                    <div class="ring-inner">
+                      <div class="ring-value">7</div>
+                      <small>giorni</small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="cycle-meta">
+                  <div>
+                    <label>Ultima mestruazione</label>
+                    <strong id="last-period-value">25 ago</strong>
+                  </div>
+                  <div>
+                    <label>Ovulazione</label>
+                    <strong id="ovulation-value">11 set</strong>
                   </div>
                 </div>
               </div>
+            </div>
+          </section>
 
-              <div class="cycle-meta">
-                <div>
-                  <label>Ultima mestruazione</label>
-                  <strong id="last-period-value">25 ago</strong>
-                </div>
-                <div>
-                  <label>Ovulazione</label>
-                  <strong id="ovulation-value">11 set</strong>
-                </div>
+          <section class="stats-grid" aria-label="Statistiche principali">
+            <article class="stat-card accent">
+              <span class="stat-title">Flusso</span>
+              <strong id="flow-value">Moderato</strong>
+              <small id="flow-meta">3/5 · 4 giorni previsti</small>
+            </article>
+
+            <article class="stat-card">
+              <span class="stat-title">Sintomi</span>
+              <strong id="symptom-value">Leggeri</strong>
+              <small id="symptom-meta">Dolore minimo e umore stabile</small>
+            </article>
+
+            <article class="stat-card">
+              <span class="stat-title">Sonno</span>
+              <strong id="sleep-value">8h</strong>
+              <small id="sleep-meta">Qualità buona nelle ultime 7 notti</small>
+            </article>
+
+            <article class="stat-card">
+              <span class="stat-title">Salute</span>
+              <strong id="wellness-value">Buona</strong>
+              <small id="wellness-meta">Ritmo regolare e recupero ottimale</small>
+            </article>
+          </section>
+
+          <section class="panel" id="history">
+            <div class="panel-header row">
+              <h3>Cronologia</h3>
+              <button class="ghost-btn" type="button">Vedi storico</button>
+            </div>
+
+            <div class="user-summary">
+              <div class="summary-box">
+                <strong id="average-cycle">28d</strong>
+                <span>Durata media ciclo</span>
+              </div>
+              <div class="summary-box">
+                <strong id="next-cycle">4d</strong>
+                <span>Tempo previsto al prossimo ciclo</span>
+              </div>
+              <div class="summary-box">
+                <strong id="delay-score">0d</strong>
+                <span>Ritardo stimato</span>
               </div>
             </div>
-          </div>
-        </section>
 
-        <section class="stats-grid" aria-label="Statistiche principali">
-          <article class="stat-card accent">
-            <span class="stat-title">Flusso</span>
-            <strong id="flow-value">Moderato</strong>
-            <small id="flow-meta">3/5 · 4 giorni previsti</small>
-          </article>
+            <ul id="history-list" class="history-list" style="margin-top: 20px;"></ul>
+          </section>
 
-          <article class="stat-card">
-            <span class="stat-title">Sintomi</span>
-            <strong id="symptom-value">Leggeri</strong>
-            <small id="symptom-meta">Dolore minimo e umore stabile</small>
-          </article>
-
-          <article class="stat-card">
-            <span class="stat-title">Sonno</span>
-            <strong id="sleep-value">8h</strong>
-            <small id="sleep-meta">Qualità buona nelle ultime 7 notti</small>
-          </article>
-
-          <article class="stat-card">
-            <span class="stat-title">Salute</span>
-            <strong id="wellness-value">Buona</strong>
-            <small id="wellness-meta">Ritmo regolare e recupero ottimale</small>
-          </article>
-        </section>
-
-        <section class="panel data-entry" aria-labelledby="data-entry-title">
-          <div class="panel-header">
-            <h3 id="data-entry-title">I tuoi dati</h3>
-          </div>
-
-          <form id="cycle-form" class="data-form">
-            <div class="form-field">
-              <label for="lastPeriod">Data ultima mestruazione</label>
-              <input id="lastPeriod" name="lastPeriod" type="date" />
-            </div>
-
-            <div class="form-field">
-              <label for="cycleLength">Durata ciclo (giorni)</label>
-              <input id="cycleLength" name="cycleLength" type="number" min="20" max="40" value="28" />
-            </div>
-
-            <div class="form-field">
-              <label for="periodLength">Durata mestruazione (giorni)</label>
-              <input id="periodLength" name="periodLength" type="number" min="2" max="10" value="5" />
-            </div>
-
-            <div class="form-field">
-              <label for="symptomLevel">Sintomi</label>
-              <select id="symptomLevel" name="symptomLevel">
-                <option value="Leggeri">Leggeri</option>
-                <option value="Moderati">Moderati</option>
-                <option value="Forti">Forti</option>
-              </select>
-            </div>
-
-            <div class="form-field">
-              <label for="noteTitle">Titolo nota</label>
-              <input id="noteTitle" name="noteTitle" type="text" placeholder="Es. Energia alta" />
-            </div>
-
-            <div class="form-field">
-              <label for="noteText">Nota del giorno</label>
-              <textarea id="noteText" name="noteText" placeholder="Scrivi come ti senti oggi..."></textarea>
-            </div>
-
-            <div class="form-field">
-              <label for="reminderText">Promemoria</label>
-              <input id="reminderText" name="reminderText" type="text" placeholder="Es. Controlla lo stress" />
-            </div>
-
-            <div class="form-field">
-              <label for="sleepHours">Ore di sonno</label>
-              <input id="sleepHours" name="sleepHours" type="number" min="4" max="12" step="0.5" value="8" />
-            </div>
-
-            <div class="form-actions">
-              <button class="primary-btn" type="submit">Salva i miei dati</button>
-            </div>
-          </form>
-        </section>
-
-        <section class="content-grid" id="calendar">
-          <div class="panel">
+          <section class="panel data-entry" aria-labelledby="data-entry-title">
             <div class="panel-header">
-              <h2>Calendario del ciclo</h2>
-              <button class="ghost-btn" type="button">Settembre</button>
+              <h3 id="data-entry-title">I tuoi dati</h3>
             </div>
 
-            <div class="month-legend">
-              <span><span class="dot dot-red"></span>Mestruazione</span>
-              <span><span class="dot dot-pink"></span>Fertile</span>
-              <span><span class="dot dot-gold"></span>Picco</span>
-            </div>
-
-            <div class="calendar" aria-label="Calendario mensile del ciclo">
-              <div class="day-name">Lun</div>
-              <div class="day-name">Mar</div>
-              <div class="day-name">Mer</div>
-              <div class="day-name">Gio</div>
-              <div class="day-name">Ven</div>
-              <div class="day-name">Sab</div>
-              <div class="day-name">Dom</div>
-
-              <div class="day muted">27</div>
-              <div class="day muted">28</div>
-              <div class="day muted">29</div>
-              <div class="day muted">30</div>
-              <div class="day muted">31</div>
-              <div class="day active">1</div>
-              <div class="day active">2</div>
-
-              <div class="day active">3</div>
-              <div class="day active">4</div>
-              <div class="day active">5</div>
-              <div class="day fertile">6</div>
-              <div class="day fertile">7</div>
-              <div class="day fertile">8</div>
-              <div class="day fertile">9</div>
-
-              <div class="day fertile">10</div>
-              <div class="day trigger">11</div>
-              <div class="day">12</div>
-              <div class="day">13</div>
-              <div class="day">14</div>
-              <div class="day">15</div>
-              <div class="day">16</div>
-
-              <div class="day">17</div>
-              <div class="day">18</div>
-              <div class="day">19</div>
-              <div class="day">20</div>
-              <div class="day">21</div>
-              <div class="day">22</div>
-              <div class="day">23</div>
-
-              <div class="day">24</div>
-              <div class="day">25</div>
-              <div class="day">26</div>
-              <div class="day">27</div>
-              <div class="day">28</div>
-              <div class="day">29</div>
-              <div class="day">30</div>
-            </div>
-          </div>
-
-          <div class="panel" id="insights">
-            <div class="panel-header compact-header">
-              <h3>Note del mese</h3>
-              <button class="ghost-btn" type="button">+ nuova nota</button>
-            </div>
-
-            <ul class="notes-list" id="notes-list">
-              <li>
-                <span class="note-time">Lun 09:00</span>
-                <strong>Energia alta</strong>
-                <small>Ho completato la sessione cardio senza affaticamento eccessivo.</small>
-              </li>
-
-              <li>
-                <span class="note-time">Mer 18:40</span>
-                <strong>Umore variabile</strong>
-                <small>Leggeri cambiamenti emotivi nel pomeriggio, ma sempre gestibili.</small>
-              </li>
-
-              <li>
-                <span class="note-time">Ven 22:15</span>
-                <strong>Riposo</strong>
-                <small>Sonno regolare e miglioramento della qualità del riposo.</small>
-              </li>
-            </ul>
-          </div>
-        </section>
-
-        <section class="bottom-grid" id="habits">
-          <div class="panel highlighted-panel">
-            <div class="panel-header">
-              <h3>Andamento</h3>
-              <button class="ghost-btn" type="button">Vedi report</button>
-            </div>
-
-            <div class="bars" aria-label="Grafico andamento settimanale">
-              <div class="bar-group">
-                <div class="bar"><span style="height: 72%;"></span></div>
-                <div class="bar-label">Lun</div>
+            <form id="cycle-form" class="data-form">
+              <div class="form-field">
+                <label for="lastPeriod">Data ultima mestruazione</label>
+                <input id="lastPeriod" name="lastPeriod" type="date" />
               </div>
-              <div class="bar-group">
-                <div class="bar"><span style="height: 56%;"></span></div>
-                <div class="bar-label">Mar</div>
+
+              <div class="form-field">
+                <label for="cycleLength">Durata ciclo (giorni)</label>
+                <input id="cycleLength" name="cycleLength" type="number" min="20" max="40" value="28" />
               </div>
-              <div class="bar-group">
-                <div class="bar"><span style="height: 84%;"></span></div>
-                <div class="bar-label">Mer</div>
+
+              <div class="form-field">
+                <label for="periodLength">Durata mestruazione (giorni)</label>
+                <input id="periodLength" name="periodLength" type="number" min="2" max="10" value="5" />
               </div>
-              <div class="bar-group">
-                <div class="bar"><span style="height: 61%;"></span></div>
-                <div class="bar-label">Gio</div>
+
+              <div class="form-field">
+                <label for="symptomLevel">Sintomi</label>
+                <select id="symptomLevel" name="symptomLevel">
+                  <option value="Leggeri">Leggeri</option>
+                  <option value="Moderati">Moderati</option>
+                  <option value="Forti">Forti</option>
+                </select>
               </div>
-              <div class="bar-group">
-                <div class="bar"><span style="height: 94%;"></span></div>
-                <div class="bar-label">Ven</div>
+
+              <div class="form-field">
+                <label for="noteTitle">Titolo nota</label>
+                <input id="noteTitle" name="noteTitle" type="text" placeholder="Es. Energia alta" />
               </div>
-              <div class="bar-group">
-                <div class="bar"><span style="height: 68%;"></span></div>
-                <div class="bar-label">Sab</div>
+
+              <div class="form-field">
+                <label for="noteText">Nota del giorno</label>
+                <textarea id="noteText" name="noteText" placeholder="Scrivi come ti senti oggi..."></textarea>
               </div>
-              <div class="bar-group">
-                <div class="bar"><span style="height: 79%;"></span></div>
-                <div class="bar-label">Dom</div>
+
+              <div class="form-field">
+                <label for="reminderText">Promemoria</label>
+                <input id="reminderText" name="reminderText" type="text" placeholder="Es. Controlla lo stress" />
+              </div>
+
+              <div class="form-field">
+                <label for="sleepHours">Ore di sonno</label>
+                <input id="sleepHours" name="sleepHours" type="number" min="4" max="12" step="0.5" value="8" />
+              </div>
+
+              <div class="form-actions">
+                <button class="secondary-btn" type="button" id="add-history-btn">Salva cronologia</button>
+                <button class="primary-btn" type="submit">Salva i miei dati</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="content-grid" id="calendar">
+            <div class="panel">
+              <div class="panel-header">
+                <h2>Calendario del ciclo</h2>
+                <button class="ghost-btn" type="button">Settembre</button>
+              </div>
+
+              <div class="month-legend">
+                <span><span class="dot dot-red"></span>Mestruazione</span>
+                <span><span class="dot dot-pink"></span>Fertile</span>
+                <span><span class="dot dot-gold"></span>Picco</span>
+              </div>
+
+              <div class="calendar" aria-label="Calendario mensile del ciclo">
+                <div class="day-name">Lun</div>
+                <div class="day-name">Mar</div>
+                <div class="day-name">Mer</div>
+                <div class="day-name">Gio</div>
+                <div class="day-name">Ven</div>
+                <div class="day-name">Sab</div>
+                <div class="day-name">Dom</div>
+
+                <div class="day muted">27</div>
+                <div class="day muted">28</div>
+                <div class="day muted">29</div>
+                <div class="day muted">30</div>
+                <div class="day muted">31</div>
+                <div class="day active">1</div>
+                <div class="day active">2</div>
+
+                <div class="day active">3</div>
+                <div class="day active">4</div>
+                <div class="day active">5</div>
+                <div class="day fertile">6</div>
+                <div class="day fertile">7</div>
+                <div class="day fertile">8</div>
+                <div class="day fertile">9</div>
+
+                <div class="day fertile">10</div>
+                <div class="day trigger">11</div>
+                <div class="day">12</div>
+                <div class="day">13</div>
+                <div class="day">14</div>
+                <div class="day">15</div>
+                <div class="day">16</div>
+
+                <div class="day">17</div>
+                <div class="day">18</div>
+                <div class="day">19</div>
+                <div class="day">20</div>
+                <div class="day">21</div>
+                <div class="day">22</div>
+                <div class="day">23</div>
+
+                <div class="day">24</div>
+                <div class="day">25</div>
+                <div class="day">26</div>
+                <div class="day">27</div>
+                <div class="day">28</div>
+                <div class="day">29</div>
+                <div class="day">30</div>
               </div>
             </div>
-          </div>
 
-          <div class="panel">
-            <div class="panel-header">
-              <h3>Promemoria</h3>
-            </div>
+            <div class="panel" id="forecast">
+              <div class="panel-header compact-header">
+                <h3>Previsioni</h3>
+              </div>
 
-            <ul class="reminder-list" id="reminder-list">
-              <li>
-                <span class="reminder-dot"></span>
-                <div>
-                  <strong>Controlla lo stress</strong>
-                  <small>Prossimo appuntamento: domani alle 20:00.</small>
+              <div class="user-summary" style="margin-top:0; grid-template-columns:1fr;">
+                <div class="summary-box">
+                  <strong id="forecast-next">Tra 4 giorni</strong>
+                  <span>Prossimo ciclo previsto</span>
                 </div>
-              </li>
-
-              <li>
-                <span class="reminder-dot"></span>
-                <div>
-                  <strong>Integrazione</strong>
-                  <small>Assumi vitamina D e omega-3 dopo pranzo.</small>
+                <div class="summary-box">
+                  <strong id="forecast-delay">Nessun ritardo</strong>
+                  <span>Stima del ritardo</span>
                 </div>
-              </li>
+              </div>
+            </div>
+          </section>
 
-              <li>
-                <span class="reminder-dot"></span>
-                <div>
-                  <strong>Check-up</strong>
-                  <small>Agenda visita medica per il 19 ottobre.</small>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </section>
+          <section class="bottom-grid" id="journal">
+            <div class="panel highlighted-panel">
+              <div class="panel-header">
+                <h3>Diario</h3>
+              </div>
+
+              <div class="mini-form">
+                <textarea id="journal-entry" placeholder="Scrivi un pensiero, un sintomo o una sensazione..."></textarea>
+                <button class="primary-btn" type="button" id="journal-save-btn">Salva</button>
+              </div>
+
+              <ul id="diary-list" class="diary-list" style="margin-top: 18px;"></ul>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <h3>Promemoria</h3>
+              </div>
+
+              <ul class="reminder-list" id="reminder-list">
+                <li>
+                  <span class="reminder-dot"></span>
+                  <div>
+                    <strong>Controlla lo stress</strong>
+                    <small>Prossimo appuntamento: domani alle 20:00.</small>
+                  </div>
+                </li>
+
+                <li>
+                  <span class="reminder-dot"></span>
+                  <div>
+                    <strong>Integrazione</strong>
+                    <small>Assumi vitamina D e omega-3 dopo pranzo.</small>
+                  </div>
+                </li>
+
+                <li>
+                  <span class="reminder-dot"></span>
+                  <div>
+                    <strong>Check-up</strong>
+                    <small>Agenda visita medica per il 19 ottobre.</small>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </div>
       </main>
     </div>
 
     <script>
-      const STORAGE_KEY = 'moonflow-cycle-data';
+      const USERS_KEY = 'moonflow-users';
+      const CURRENT_USER_KEY = 'moonflow-current-user';
 
-      const defaults = {
+      const defaults = () => ({
         lastPeriod: '2026-10-25',
         cycleLength: 28,
         periodLength: 5,
@@ -411,24 +579,96 @@
         noteTitle: 'Energia alta',
         noteText: 'Ho completato la sessione cardio senza affaticamento eccessivo.',
         reminderText: 'Controlla lo stress',
-        sleepHours: 8
-      };
+        sleepHours: 8,
+        diary: [
+          {
+            id: Date.now(),
+            date: new Date().toISOString(),
+            text: 'Oggi mi sento più tranquilla, ho dormito bene e ho più energia.'
+          }
+        ],
+        history: [
+          {
+            date: '2026-09-20',
+            cycleLength: 28,
+            note: 'Ciclo regolare, sintomi molto lievi.'
+          }
+        ]
+      });
 
-      function safeParse(value, fallback) {
+      function getUsers() {
+        const raw = localStorage.getItem(USERS_KEY);
         try {
-          return JSON.parse(value) ?? fallback;
+          return raw ? JSON.parse(raw) : {};
         } catch {
-          return fallback;
+          return {};
         }
       }
 
+      function saveUsers(users) {
+        localStorage.setItem(USERS_KEY, JSON.stringify(users));
+      }
+
+      function getCurrentUser() {
+        return localStorage.getItem(CURRENT_USER_KEY);
+      }
+
+      function setCurrentUser(username) {
+        localStorage.setItem(CURRENT_USER_KEY, username);
+      }
+
+      function clearCurrentUser() {
+        localStorage.removeItem(CURRENT_USER_KEY);
+      }
+
+      function getActiveUserData() {
+        const username = getCurrentUser();
+        const users = getUsers();
+        return username && users[username] ? users[username] : null;
+      }
+
+      function setActiveUserData(data) {
+        const username = getCurrentUser();
+        const users = getUsers();
+        if (!username) return;
+        users[username] = { ...users[username], ...data };
+        saveUsers(users);
+      }
+
+      function createUser(username, password) {
+        const users = getUsers();
+        if (users[username]) {
+          return false;
+        }
+
+        users[username] = {
+          password,
+          data: defaults()
+        };
+        saveUsers(users);
+        return true;
+      }
+
+      function loginUser(username, password) {
+        const users = getUsers();
+        const user = users[username];
+        if (!user || user.password !== password) {
+          return false;
+        }
+        setCurrentUser(username);
+        return true;
+      }
+
       function getState() {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        return saved ? { ...defaults, ...safeParse(saved, defaults) } : { ...defaults };
+        const user = getActiveUserData();
+        return user ? user.data : defaults();
       }
 
       function saveState(data) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        const user = getActiveUserData();
+        if (!user) return;
+        user.data = { ...user.data, ...data };
+        setActiveUserData({ data: user.data });
       }
 
       function formatShortDate(dateString) {
@@ -455,25 +695,83 @@
         return 'Equilibrio';
       }
 
+      function getAverageCycle(dataHistory) {
+        if (!Array.isArray(dataHistory) || !dataHistory.length) return 28;
+        const values = dataHistory.map(item => Number(item.cycleLength) || 28).filter(Boolean);
+        if (!values.length) return 28;
+        return Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
+      }
+
+      function getForecastInfo(state) {
+        const cycleLength = Number(state.cycleLength) || 28;
+        const lastPeriod = state.lastPeriod;
+        const last = new Date(lastPeriod + 'T12:00:00');
+        const next = new Date(last.getTime() + cycleLength * 86400000);
+        const daysToNext = Math.max(Math.ceil((next - new Date()) / 86400000), 0);
+        const now = new Date();
+        const currentDay = Math.floor((now - last) / 86400000);
+        const expectedDelay = Math.max(currentDay - cycleLength, 0);
+
+        return {
+          nextCycleIn: daysToNext,
+          expectedDelay,
+          averageCycle: getAverageCycle(state.history || [])
+        };
+      }
+
+      function renderHistoryList(state) {
+        const list = document.getElementById('history-list');
+        if (!list) return;
+
+        const history = Array.isArray(state.history) && state.history.length ? state.history : [{ date: state.lastPeriod, cycleLength: state.cycleLength, note: 'Primo ciclo registrato.' }];
+
+        list.innerHTML = history.map(item => `
+          <li>
+            <strong>${formatShortDate(item.date)}</strong>
+            <small>Durata ciclo: ${Number(item.cycleLength) || 28} giorni · ${item.note || 'Nessuna nota'}</small>
+          </li>
+        `).join('');
+      }
+
+      function renderDiaryList(state) {
+        const list = document.getElementById('diary-list');
+        if (!list) return;
+
+        const entries = Array.isArray(state.diary) && state.diary.length ? state.diary.slice().reverse() : [];
+
+        if (!entries.length) {
+          list.innerHTML = '<li><strong>Nessun diario</strong><small>Scrivi la prima nota per iniziare.</small></li>';
+          return;
+        }
+
+        list.innerHTML = entries.map(entry => `
+          <li>
+            <strong>${new Date(entry.date).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' })}</strong>
+            <small>${entry.text}</small>
+          </li>
+        `).join('');
+      }
+
       function updateDashboard() {
         const state = getState();
-
-        const cycleDay = getCycleDay(state.lastPeriod, Number(state.cycleLength) || 28);
-        const phase = getPhaseLabel(cycleDay, Number(state.cycleLength) || 28, Number(state.periodLength) || 5);
+        const cycleLength = Number(state.cycleLength) || 28;
+        const cycleDay = getCycleDay(state.lastPeriod, cycleLength);
+        const phase = getPhaseLabel(cycleDay, cycleLength, Number(state.periodLength) || 5);
+        const forecast = getForecastInfo(state);
 
         document.getElementById('last-period-value').textContent = formatShortDate(state.lastPeriod);
-        document.getElementById('cycle-length-display').textContent = `${Number(state.cycleLength) || 28} giorni`;
-        document.getElementById('energy-display').textContent = state.sleepHours >= 8 ? '5/5' : '4/5';
-        document.getElementById('fertility-display').textContent = `${Math.max((Number(state.cycleLength) || 28) - 7, 1)} giorni`;
+        document.getElementById('cycle-length-display').textContent = `${cycleLength} giorni`;
+        document.getElementById('energy-display').textContent = Number(state.sleepHours) >= 8 ? '5/5' : '4/5';
+        document.getElementById('fertility-display').textContent = `${Math.max(cycleLength - 7, 1)} giorni`;
         document.querySelector('.phase-badge').textContent = phase;
 
-        const ovulationDate = new Date(new Date(state.lastPeriod + 'T12:00:00').getTime() + ((Number(state.cycleLength) || 28) - 14) * 86400000);
+        const ovulationDate = new Date(new Date(state.lastPeriod + 'T12:00:00').getTime() + ((cycleLength - 14) * 86400000));
         document.getElementById('ovulation-value').textContent = new Intl.DateTimeFormat('it-IT', {
           day: 'numeric',
           month: 'short'
         }).format(ovulationDate);
 
-        const ringValue = Math.min(Math.max((Number(state.cycleLength) || 28) - cycleDay, 1), Number(state.cycleLength) || 28);
+        const ringValue = Math.min(Math.max(cycleLength - cycleDay, 1), cycleLength);
         document.querySelector('.ring-value').textContent = Math.round(ringValue);
         document.querySelector('.ring-value').nextElementSibling.textContent = 'giorni';
 
@@ -485,6 +783,15 @@
         document.getElementById('sleep-meta').textContent = 'Qualità del riposo personale';
         document.getElementById('wellness-value').textContent = Number(state.sleepHours) >= 8 ? 'Buona' : 'Media';
         document.getElementById('wellness-meta').textContent = 'Ritmo regolare e recupero ottimale';
+
+        document.getElementById('average-cycle').textContent = `${forecast.averageCycle}d`;
+        document.getElementById('next-cycle').textContent = forecast.nextCycleIn === 0 ? 'Oggi' : `${forecast.nextCycleIn}d`;
+        document.getElementById('delay-score').textContent = `${forecast.expectedDelay}d`;
+        document.getElementById('forecast-next').textContent = forecast.nextCycleIn === 0 ? 'Oggi' : `Tra ${forecast.nextCycleIn} giorni`;
+        document.getElementById('forecast-delay').textContent = forecast.expectedDelay > 0 ? `Ritardo ${forecast.expectedDelay} giorni` : 'Nessun ritardo';
+
+        renderHistoryList(state);
+        renderDiaryList(state);
 
         const notesList = document.getElementById('notes-list');
         if (notesList) {
@@ -525,26 +832,167 @@
         document.getElementById('sleepHours').value = state.sleepHours || 8;
       }
 
-      document.getElementById('cycle-form')?.addEventListener('submit', function (event) {
+      function renderAuthState() {
+        const username = getCurrentUser();
+        const appShell = document.getElementById('app-shell');
+        const authShell = document.getElementById('auth-shell');
+        const accountName = document.getElementById('account-name');
+        const accountPill = document.getElementById('account-pill');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        if (username) {
+          appShell.classList.remove('hidden');
+          authShell.classList.add('hidden');
+          accountName.textContent = username;
+          accountPill.classList.remove('hidden');
+          logoutBtn.classList.remove('hidden');
+        } else {
+          appShell.classList.add('hidden');
+          authShell.classList.remove('hidden');
+          accountPill.classList.add('hidden');
+          logoutBtn.classList.add('hidden');
+        }
+      }
+
+      function switchAuthMode(mode) {
+        const authSubmit = document.getElementById('auth-submit');
+        document.querySelectorAll('.tab-btn').forEach(button => {
+          button.classList.toggle('active', button.dataset.mode === mode);
+        });
+        authSubmit.textContent = mode === 'register' ? 'Registrati' : 'Accedi';
+      }
+
+      document.querySelectorAll('.tab-btn').forEach(button => {
+        button.addEventListener('click', () => switchAuthMode(button.dataset.mode));
+      });
+
+      document.getElementById('auth-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        const username = String(formData.get('username') || '').trim();
+        const password = String(formData.get('password') || '').trim();
+        const mode = document.querySelector('.tab-btn.active')?.dataset.mode || 'login';
+
+        if (!username || !password) {
+          alert('Inserisci username e password.');
+          return;
+        }
+
+        if (mode === 'register') {
+          const created = createUser(username, password);
+          if (!created) {
+            alert('Questo nome utente esiste già. Prova ad accedere.');
+            return;
+          }
+          setCurrentUser(username);
+          renderAuthState();
+          populateForm();
+          updateDashboard();
+          event.currentTarget.reset();
+          return;
+        }
+
+        const ok = loginUser(username, password);
+        if (!ok) {
+          alert('Credenziali non valide.');
+          return;
+        }
+
+        renderAuthState();
+        populateForm();
+        updateDashboard();
+        event.currentTarget.reset();
+      });
+
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        clearCurrentUser();
+        renderAuthState();
+      });
+
+      document.getElementById('cycle-form').addEventListener('submit', function (event) {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         const state = {
-          lastPeriod: formData.get('lastPeriod') || defaults.lastPeriod,
-          cycleLength: Number(formData.get('cycleLength')) || defaults.cycleLength,
-          periodLength: Number(formData.get('periodLength')) || defaults.periodLength,
-          symptomLevel: formData.get('symptomLevel') || defaults.symptomLevel,
-          noteTitle: formData.get('noteTitle') || defaults.noteTitle,
-          noteText: formData.get('noteText') || defaults.noteText,
-          reminderText: formData.get('reminderText') || defaults.reminderText,
-          sleepHours: Number(formData.get('sleepHours')) || defaults.sleepHours
+          lastPeriod: formData.get('lastPeriod') || defaults().lastPeriod,
+          cycleLength: Number(formData.get('cycleLength')) || defaults().cycleLength,
+          periodLength: Number(formData.get('periodLength')) || defaults().periodLength,
+          symptomLevel: formData.get('symptomLevel') || defaults().symptomLevel,
+          noteTitle: formData.get('noteTitle') || defaults().noteTitle,
+          noteText: formData.get('noteText') || defaults().noteText,
+          reminderText: formData.get('reminderText') || defaults().reminderText,
+          sleepHours: Number(formData.get('sleepHours')) || defaults().sleepHours
         };
 
         saveState(state);
         updateDashboard();
       });
 
-      populateForm();
-      updateDashboard();
+      document.getElementById('add-history-btn').addEventListener('click', () => {
+        const current = getState();
+        const entry = {
+          date: current.lastPeriod,
+          cycleLength: current.cycleLength,
+          note: current.noteText || 'Ciclo registrato dal diario.'
+        };
+
+        const users = getUsers();
+        const username = getCurrentUser();
+        if (!username || !users[username]) return;
+
+        const existing = Array.isArray(users[username].data.history) ? users[username].data.history : [];
+        users[username].data.history = [entry, ...existing].slice(0, 12);
+        saveUsers(users);
+        updateDashboard();
+      });
+
+      document.getElementById('journal-save-btn').addEventListener('click', () => {
+        const text = document.getElementById('journal-entry').value.trim();
+        if (!text) return;
+
+        const users = getUsers();
+        const username = getCurrentUser();
+        if (!username || !users[username]) return;
+
+        const entry = {
+          id: Date.now(),
+          date: new Date().toISOString(),
+          text
+        };
+
+        const existing = Array.isArray(users[username].data.diary) ? users[username].data.diary : [];
+        users[username].data.diary = [entry, ...existing].slice(0, 10);
+        saveUsers(users);
+        document.getElementById('journal-entry').value = '';
+        updateDashboard();
+      });
+
+      function loadCurrentUserData() {
+        const username = getCurrentUser();
+        if (!username) {
+          renderAuthState();
+          return;
+        }
+
+        const users = getUsers();
+        if (!users[username]) {
+          clearCurrentUser();
+          renderAuthState();
+          return;
+        }
+
+        if (!users[username].data) {
+          users[username].data = defaults();
+          saveUsers(users);
+        }
+
+        renderAuthState();
+        populateForm();
+        updateDashboard();
+      }
+
+      switchAuthMode('login');
+      renderAuthState();
+      loadCurrentUserData();
     </script>
   </body>
 </html>
