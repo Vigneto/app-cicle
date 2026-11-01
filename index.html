@@ -1,222 +1,281 @@
 <!DOCTYPE html>
 <html lang="it">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home - Scheda Allenamento</title>
-  <link rel="stylesheet" href="scheda-allenamento/style.css">
-  <style>
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background: linear-gradient(180deg, #f4f4f4 0%, #ececec 100%);
-      font-family: Arial, sans-serif;
-      color: #1f1f1f;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MoonFlow | Traccia il tuo ciclo</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <span class="brand-mark">✦</span>
+          <span>MoonFlow</span>
+        </div>
 
-    header {
-      background: #fff;
-      border-bottom: 1px solid #e3e3e3;
-      padding: 1.2rem 2rem;
-    }
+        <nav class="main-nav" aria-label="Navigazione principale">
+          <a href="#overview">Panoramica</a>
+          <a href="#calendar">Calendario</a>
+          <a href="#insights">Andamento</a>
+          <a href="#habits">Abitudini</a>
+        </nav>
 
-    header h1 {
-      margin: 0 0 0.5rem;
-      font-size: 2.2em;
-      color: #fd9641;
-    }
+        <button class="ghost-btn small-btn" type="button">Esporta</button>
+      </header>
 
-    .menu {
-      list-style: none;
-      display: flex;
-      gap: 1.2rem;
-      margin: 0;
-      padding: 0;
-      flex-wrap: wrap;
-    }
+      <main>
+        <section class="hero" id="overview">
+          <div class="hero-copy">
+            <p class="eyebrow">wellness personale</p>
+            <h1>Traccia il tuo ciclo, capisci il tuo corpo.</h1>
+            <p class="lede">
+              Monitora flusso, sintomi, fertilità e routine con un solo sguardo.
+              Un calendario chiaro ti aiuta a sentirti in controllo ogni giorno,
+              senza stress e con maggiore consapevolezza.
+            </p>
 
-    .menu a {
-      text-decoration: none;
-      color: #333;
-      font-weight: 600;
-    }
+            <div class="cta-row">
+              <a class="primary-btn" href="#calendar">Apri il calendario</a>
+              <a class="secondary-btn" href="#habits">Aggiungi nota</a>
+            </div>
 
-    main {
-      width: min(1100px, calc(100% - 2rem));
-      margin: 2rem auto;
-      flex: 1;
-    }
+            <ul class="mini-stats">
+              <li>
+                <strong>28 giorni</strong>
+                <span>Durata media</span>
+              </li>
+              <li>
+                <strong>5/5</strong>
+                <span>Livello energia</span>
+              </li>
+              <li>
+                <strong>3 giorni</strong>
+                <span>Fase fertile</span>
+              </li>
+            </ul>
+          </div>
 
-    .hero {
-      background: #fff;
-      border-radius: 18px;
-      padding: 2rem;
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
-      margin-bottom: 2rem;
-    }
+          <div class="hero-visual">
+            <div class="visual-card">
+              <div class="card-header">
+                <span>Fase attuale</span>
+                <span class="tag">Fertile</span>
+              </div>
 
-    .hero h2 {
-      margin-top: 0;
-      font-size: clamp(2rem, 3vw, 3rem);
-      color: #1d1d1d;
-    }
+              <div class="ring-wrap">
+                <div class="cycle-ring">
+                  <div class="ring-inner">
+                    <div class="ring-value">7</div>
+                    <small>giorni</small>
+                  </div>
+                </div>
+              </div>
 
-    .hero p {
-      font-size: 1.1rem;
-      line-height: 1.6;
-      max-width: 760px;
-    }
+              <div class="cycle-meta">
+                <div>
+                  <label>Ultima mestruazione</label>
+                  <strong>25 ago</strong>
+                </div>
+                <div>
+                  <label>Ovulazione</label>
+                  <strong>11 set</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-    .cta-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
+        <section class="stats-grid" aria-label="Statistiche principali">
+          <article class="stat-card accent">
+            <span class="stat-title">Flusso</span>
+            <strong>Moderato</strong>
+            <small>3/5 · 4 giorni previsti</small>
+          </article>
 
-    .btn {
-      display: inline-block;
-      background: #fd9641;
-      color: #fff;
-      text-decoration: none;
-      padding: 0.9rem 1.4rem;
-      border-radius: 10px;
-      font-weight: 700;
-    }
+          <article class="stat-card">
+            <span class="stat-title">Sintomi</span>
+            <strong>Leggeri</strong>
+            <small>Dolore minimo e umore stabile</small>
+          </article>
 
-    .btn.secondary {
-      background: #1f1f1f;
-    }
+          <article class="stat-card">
+            <span class="stat-title">Sonno</span>
+            <strong>8h</strong>
+            <small>Qualità buona nelle ultime 7 notti</small>
+          </article>
 
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-      margin: 2rem 0;
-    }
+          <article class="stat-card">
+            <span class="stat-title">Salute</span>
+            <strong>Buona</strong>
+            <small>Ritmo regolare e recupero ottimale</small>
+          </article>
+        </section>
 
-    .feature {
-      background: #fff;
-      border-radius: 14px;
-      padding: 1.3rem;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
-    }
+        <section class="content-grid" id="calendar">
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Calendario del ciclo</h2>
+              <button class="ghost-btn" type="button">Settembre</button>
+            </div>
 
-    .feature h3 {
-      margin-top: 0;
-      color: #fd9641;
-    }
+            <div class="month-legend">
+              <span><span class="dot dot-red"></span>Mestruazione</span>
+              <span><span class="dot dot-pink"></span>Fertile</span>
+              <span><span class="dot dot-gold"></span>Picco</span>
+            </div>
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
-    }
+            <div class="calendar" aria-label="Calendario mensile del ciclo">
+              <div class="day-name">Lun</div>
+              <div class="day-name">Mar</div>
+              <div class="day-name">Mer</div>
+              <div class="day-name">Gio</div>
+              <div class="day-name">Ven</div>
+              <div class="day-name">Sab</div>
+              <div class="day-name">Dom</div>
 
-    th, td {
-      border: 1px solid #e6e6e6;
-      padding: 0.9rem 1rem;
-      text-align: left;
-    }
+              <div class="day muted">27</div>
+              <div class="day muted">28</div>
+              <div class="day muted">29</div>
+              <div class="day muted">30</div>
+              <div class="day muted">31</div>
+              <div class="day active">1</div>
+              <div class="day active">2</div>
 
-    th {
-      background: #f7f7f7;
-    }
+              <div class="day active">3</div>
+              <div class="day active">4</div>
+              <div class="day active">5</div>
+              <div class="day fertile">6</div>
+              <div class="day fertile">7</div>
+              <div class="day fertile">8</div>
+              <div class="day fertile">9</div>
 
-    footer {
-      text-align: center;
-      background: #1d1d1d;
-      color: #fff;
-      padding: 1rem;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Costruisci la tua scheda</h1>
-    <nav>
-      <ul class="menu">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="scheda-allenamento/workouts.html">Esercizi</a></li>
-        <li><a href="scheda-allenamento/recovery.html">Recupero</a></li>
-      </ul>
-    </nav>
-  </header>
+              <div class="day fertile">10</div>
+              <div class="day trigger">11</div>
+              <div class="day">12</div>
+              <div class="day">13</div>
+              <div class="day">14</div>
+              <div class="day">15</div>
+              <div class="day">16</div>
 
-  <main>
-    <section class="hero">
-      <h2>Pianifica il tuo allenamento in base agli obiettivi</h2>
-      <p>
-        Questo sito ti aiuta a creare una scheda personalizzata, scegliere gli esercizi giusti
-        e organizzare il recupero per migliorare forza, resistenza e composizione corporea.
-      </p>
+              <div class="day">17</div>
+              <div class="day">18</div>
+              <div class="day">19</div>
+              <div class="day">20</div>
+              <div class="day">21</div>
+              <div class="day">22</div>
+              <div class="day">23</div>
 
-      <div class="cta-row">
-        <a class="btn" href="scheda-allenamento/workouts.html">Esplora gli esercizi</a>
-        <a class="btn secondary" href="scheda-allenamento/recovery.html">Scopri il recupero</a>
-      </div>
-    </section>
+              <div class="day">24</div>
+              <div class="day">25</div>
+              <div class="day">26</div>
+              <div class="day">27</div>
+              <div class="day">28</div>
+              <div class="day">29</div>
+              <div class="day">30</div>
+            </div>
+          </div>
 
-    <section>
-      <h3>Come funziona</h3>
-      <div class="features">
-        <article class="feature">
-          <h3>1. Definisci l'obiettivo</h3>
-          <p>Forza, massa muscolare, definizione o resistenza: la scheda parte dal tuo traguardo.</p>
-        </article>
-        <article class="feature">
-          <h3>2. Scegli i gruppi muscolari</h3>
-          <p>Organizza gli allenamenti in modo equilibrato e progressivo per evitare sovraccarichi.</p>
-        </article>
-        <article class="feature">
-          <h3>3. Gestisci il recupero</h3>
-          <p>Un buon piano include riposo, sonno e strategie per migliorare la qualità dell'allenamento.</p>
-        </article>
-      </div>
-    </section>
+          <div class="panel" id="insights">
+            <div class="panel-header compact-header">
+              <h3>Note del mese</h3>
+              <button class="ghost-btn" type="button">+ nuova nota</button>
+            </div>
 
-    <section>
-      <h3>Esempio di split settimanale</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Giorno</th>
-            <th>Muscoli</th>
-            <th>Focus principale</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Lunedì</td>
-            <td>Petto - Tricipiti</td>
-            <td>Panca piana, croci, dips</td>
-          </tr>
-          <tr>
-            <td>Mercoledì</td>
-            <td>Schiena - Bicipiti</td>
-            <td>Rematore, trazioni, curl</td>
-          </tr>
-          <tr>
-            <td>Venerdì</td>
-            <td>Gambe - Spalle</td>
-            <td>Squat, affondi, military press</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+            <ul class="notes-list">
+              <li>
+                <span class="note-time">Lun 09:00</span>
+                <strong>Energia alta</strong>
+                <small>Ho completato la sessione cardio senza affaticamento eccessivo.</small>
+              </li>
 
-    <p style="margin-top: 2rem; font-size: 1.05rem;">
-      Prosegui su <a href="scheda-allenamento/workouts.html">Esercizi</a> per vedere esercizi pratici e schemi di allenamento.
-    </p>
-  </main>
+              <li>
+                <span class="note-time">Mer 18:40</span>
+                <strong>Umore variabile</strong>
+                <small>Leggeri cambiamenti emotivi nel pomeriggio, ma sempre gestibili.</small>
+              </li>
 
-  <footer>
-    <p>© 2025 - Mini Sito Allenamento</p>
-  </footer>
-</body>
+              <li>
+                <span class="note-time">Ven 22:15</span>
+                <strong>Riposo</strong>
+                <small>Sonno regolare e miglioramento della qualità del riposo.</small>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="bottom-grid" id="habits">
+          <div class="panel highlighted-panel">
+            <div class="panel-header">
+              <h3>Andamento</h3>
+              <button class="ghost-btn" type="button">Vedi report</button>
+            </div>
+
+            <div class="bars" aria-label="Grafico andamento settimanale">
+              <div class="bar-group">
+                <div class="bar"><span style="height: 72%;"></span></div>
+                <div class="bar-label">Lun</div>
+              </div>
+              <div class="bar-group">
+                <div class="bar"><span style="height: 56%;"></span></div>
+                <div class="bar-label">Mar</div>
+              </div>
+              <div class="bar-group">
+                <div class="bar"><span style="height: 84%;"></span></div>
+                <div class="bar-label">Mer</div>
+              </div>
+              <div class="bar-group">
+                <div class="bar"><span style="height: 61%;"></span></div>
+                <div class="bar-label">Gio</div>
+              </div>
+              <div class="bar-group">
+                <div class="bar"><span style="height: 94%;"></span></div>
+                <div class="bar-label">Ven</div>
+              </div>
+              <div class="bar-group">
+                <div class="bar"><span style="height: 68%;"></span></div>
+                <div class="bar-label">Sab</div>
+              </div>
+              <div class="bar-group">
+                <div class="bar"><span style="height: 79%;"></span></div>
+                <div class="bar-label">Dom</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Promemoria</h3>
+            </div>
+
+            <ul class="reminder-list">
+              <li>
+                <span class="reminder-dot"></span>
+                <div>
+                  <strong>Controlla lo stress</strong>
+                  <small>Prossimo appuntamento: domani alle 20:00.</small>
+                </div>
+              </li>
+
+              <li>
+                <span class="reminder-dot"></span>
+                <div>
+                  <strong>Integrazione</strong>
+                  <small>Assumi vitamina D e omega-3 dopo pranzo.</small>
+                </div>
+              </li>
+
+              <li>
+                <span class="reminder-dot"></span>
+                <div>
+                  <strong>Check-up</strong>
+                  <small>Agenda visita medica per il 19 ottobre.</small>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
 </html>
