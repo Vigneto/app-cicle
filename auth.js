@@ -54,38 +54,9 @@
     localStorage.setItem(CURRENT_USER_KEY, username);
   }
 
-  function setCurrentRole(role) {
-    localStorage.setItem(CURRENT_ROLE_KEY, role || 'owner');
-  }
-
-  function getCurrentRole() {
-    return localStorage.getItem(CURRENT_ROLE_KEY) || 'owner';
-  }
-
-  function clearCurrentRole() {
-    localStorage.removeItem(CURRENT_ROLE_KEY);
-  }
-
-  function setPartnerPayload(payload) {
-    if (!payload) {
-      localStorage.removeItem(PARTNER_PAYLOAD_KEY);
-      return;
-    }
-    localStorage.setItem(PARTNER_PAYLOAD_KEY, JSON.stringify(payload));
-  }
-
-  function getPartnerPayload() {
-    try {
-      const raw = localStorage.getItem(PARTNER_PAYLOAD_KEY);
-      return raw ? JSON.parse(raw) : null;
-    } catch {
-      return null;
-    }
-  }
-
   function clearCurrentUser() {
     localStorage.removeItem(CURRENT_USER_KEY);
-    clearCurrentRole();
+    localStorage.removeItem(CURRENT_ROLE_KEY);
     localStorage.removeItem(PARTNER_PAYLOAD_KEY);
   }
 
@@ -115,9 +86,38 @@
     const user = users[username];
     if (!user || user.password !== password) return false;
     setCurrentUser(username);
-    setCurrentRole('owner');
+    localStorage.setItem(CURRENT_ROLE_KEY, 'owner');
     localStorage.removeItem(PARTNER_PAYLOAD_KEY);
     return true;
+  }
+
+  function setCurrentRole(role) {
+    localStorage.setItem(CURRENT_ROLE_KEY, role || 'owner');
+  }
+
+  function getCurrentRole() {
+    return localStorage.getItem(CURRENT_ROLE_KEY) || 'owner';
+  }
+
+  function clearCurrentRole() {
+    localStorage.removeItem(CURRENT_ROLE_KEY);
+  }
+
+  function setPartnerPayload(payload) {
+    if (!payload) {
+      localStorage.removeItem(PARTNER_PAYLOAD_KEY);
+      return;
+    }
+    localStorage.setItem(PARTNER_PAYLOAD_KEY, JSON.stringify(payload));
+  }
+
+  function getPartnerPayload() {
+    try {
+      const raw = localStorage.getItem(PARTNER_PAYLOAD_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
   }
 
   function getAccessCodes() {
@@ -207,6 +207,7 @@
     getCurrentRole,
     setCurrentRole,
     clearCurrentUser,
+    clearCurrentRole,
     createUser,
     loginUser,
     loginAsPartner,
@@ -219,6 +220,6 @@
     createAccessCode,
     setPartnerPayload,
     getPartnerPayload,
-    clearCurrentRole
+    getAccessCodes
   };
 })();
