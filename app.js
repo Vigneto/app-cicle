@@ -17,6 +17,81 @@
     return Auth.getCurrentData();
   }
 
+  function renderCalendar() {
+    const monthButton = document.getElementById('calendar-month-btn');
+    const calendar = document.querySelector('.calendar');
+    if (!monthButton || !calendar) return;
+
+    const now = new Date();
+    const monthName = new Intl.DateTimeFormat('it-IT', { month: 'long' }).format(now);
+    monthButton.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+
+    const data = getState() || {};
+    const cycleLength = Number(data.cycleLength) || 28;
+    const periodLength = Number(data.periodLength) || 5;
+    const lastPeriodValue = data.lastPeriod ? new Date(data.lastPeriod + 'T12:00:00') : null;
+
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const firstWeekday = (firstDay.getDay() + 6) % 7;
+    const daysInPrevMonth = new Date(year, month, 0).getDate();
+    const cells = [];
+
+    for (let index = 0; index < firstWeekday; index += 1) {
+      const day = daysInPrevMonth - firstWeekday + index + 1;
+      cells.push({
+        day,
+        muted: true,
+        date: new Date(year, month - 1, day)
+      });
+    }
+
+    for (let day = 1; day <= lastDay.getDate(); day += 1) {
+      cells.push({
+        day,
+        muted: false,
+        date: new Date(year, month, day)
+      });
+    }
+
+    while (cells.length % 7 !== 0) {
+      const nextDay = cells.length - (firstWeekday + lastDay.getDate()) + 1;
+      cells.push({
+        day: nextDay,
+        muted: true,
+        date: new Date(year, month + 1, nextDay)
+      });
+    }
+
+    const weekDays = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
+    const names = weekDays.map(day => `<div class="day-name">${day}</div>`).join('');
+
+    const renderedCells = cells.map(({ day, muted, date }) => {
+      const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const currentDateString = `${localDate.getFullYear()}-${String(localDate.getMonth() + 1).padStart(2, '0')}-${String(localDate.getDate()).padStart(2, '0')}`;
+
+      let className = 'day';
+      if (muted) className += ' muted';
+
+      if (lastPeriodValue) {
+        const diffDays = Math.floor((localDate - lastPeriodValue) / 86400000);
+        const inPeriod = diffDays >= 0 && diffDays < periodLength;
+        const inFertileWindow = diffDays >= cycleLength - 7 && diffDays <= cycleLength;
+        const inPeakWindow = diffDays >= cycleLength - 3 && diffDays <= cycleLength;
+
+        if (inPeriod) className += ' active';
+        else if (inFertileWindow) className += ' fertile';
+        else if (inPeakWindow) className += ' trigger';
+      }
+
+      return `<div class="${className}">${day}</div>`;
+    }).join('');
+
+    calendar.innerHTML = `${names}${renderedCells}`;
+  }
+
   function renderHistoryList(data) {
     const list = document.getElementById('history-list');
     if (!list) return;
@@ -109,6 +184,8 @@
   function updateDashboard() {
     const data = getState();
     if (!data) return;
+
+    renderCalendar();
 
     const cycleLength = Number(data.cycleLength) || 28;
     const cycleDay = getCycleDay(data.lastPeriod, cycleLength);
@@ -414,6 +491,8 @@
       Auth.ensureProfile();
       populateForm();
       updateDashboard();
+    } else {
+      renderCalendar();
     }
   }
 
