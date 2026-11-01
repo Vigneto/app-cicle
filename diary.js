@@ -21,7 +21,9 @@
   }
 
   function addDiaryEntry(text, mood) {
+    if (getAuth() && getAuth().getCurrentRole && getAuth().getCurrentRole() === 'partner') return;
     if (!ensureCurrentUser()) return;
+
     const data = readData();
     const nextEntry = {
       id: Date.now(),
@@ -36,7 +38,9 @@
   }
 
   function addHistoryEntry(note, cycleLength) {
+    if (getAuth() && getAuth().getCurrentRole && getAuth().getCurrentRole() === 'partner') return;
     if (!ensureCurrentUser()) return;
+
     const data = readData();
     const entry = {
       date: data.lastPeriod || new Date().toISOString(),
@@ -58,43 +62,68 @@
       diary: data.diary || [],
       history: data.history || [],
       noteTitle: data.noteTitle || '',
-      noteText: data.noteText || ''
+      noteText: data.noteText || '',
+      lastPeriod: data.lastPeriod || '',
+      cycleLength: data.cycleLength || 28,
+      periodLength: data.periodLength || 5,
+      sleepHours: data.sleepHours || 8,
+      symptomLevel: data.symptomLevel || 'Leggeri'
     };
     return JSON.stringify(payload);
   }
 
   function shareAll() {
-    return btoa(encodeURIComponent(getSharePayload('all')));
+    const auth = getAuth();
+    const payload = getSharePayload('all');
+    if (!payload) return '';
+
+    if (auth && auth.getCurrentUser && auth.getCurrentUser() && auth.createAccessCode) {
+      return auth.createAccessCode(auth.getCurrentUser(), JSON.parse(payload));
+    }
+
+    return btoa(encodeURIComponent(payload));
   }
 
   function shareSelected() {
+    const auth = getAuth();
     if (!ensureCurrentUser()) return '';
+
     const data = readData();
     const selected = (data.diary || []).slice(0, 3);
     const payload = {
       exportedAt: new Date().toISOString(),
       type: 'selected',
-      diary: selected
+      diary: selected,
+      lastPeriod: data.lastPeriod || '',
+      cycleLength: data.cycleLength || 28,
+      periodLength: data.periodLength || 5,
+      inReadOnlyMode: true
     };
+
+    if (auth && auth.getCurrentUser && auth.getCurrentUser() && auth.createAccessCode) {
+      return auth.createAccessCode(auth.getCurrentUser(), payload);
+    }
+
     return btoa(encodeURIComponent(JSON.stringify(payload)));
   }
 
   function importSharedCode(raw) {
-    if (!raw || !ensureCurrentUser()) return false;
+    if (!raw) return false;
+
+    const auth = getAuth();
+    if (!auth) return false;
+
+    const access = auth.getAccessCodePayload ? auth.getAccessCodePayload(raw) : null;
+    if (access && access.payload) {
+      auth.setCurrentRole('partner');
+      auth.setPartnerPayload(access.payload);
+      return true;
+    }
+
     try {
       const decoded = JSON.parse(decodeURIComponent(atob(raw)));
-      const auth = getAuth();
-      const data = auth.getCurrentData();
-      const existing = Array.isArray(data.sharedNotes) ? data.sharedNotes : [];
-      const next = {
-        id: Date.now(),
-        source: decoded.exportedAt || new Date().toISOString(),
-        payload: decoded,
-        importedAt: new Date().toISOString()
-      };
-
-      data.sharedNotes = [next, ...existing].slice(0, 10);
-      auth.updateCurrentData({ sharedNotes: data.sharedNotes });
+      auth.setCurrentRole('partner');
+      auth.setPartnerPayload(decoded);
       return true;
     } catch {
       return false;
